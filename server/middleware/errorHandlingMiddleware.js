@@ -1,6 +1,6 @@
 import apiError from "../error/apiError.js";
 
-export default (err, req, res) => {
+export default (req, res, err) => {
   if (err instanceof apiError) {
     return res.status(err.status).json({ message: err.messge });
   }
