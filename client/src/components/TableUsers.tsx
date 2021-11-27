@@ -7,15 +7,18 @@ import { useActions } from "../hooks/useActions";
 import { ISUser } from "../models/IUser";
 import { formatDate } from "../utils/data";
 
-const TableUsers: FC = () => {
-  const { getUser, setSelectedUsers } = useActions();
-  const { users } = useTypedSelector((state) => state.users);
+interface UserProps {
+  buttonEdit: () => void;
+}
 
-  const [selectedRowKeys, setSetSelectedRowKeys] = React.useState([]);
+const TableUsers: FC<UserProps> = (props: UserProps) => {
+  const { buttonEdit } = props;
+  const { getUser, setSelectedUsers } = useActions();
+  const { users, isLoading } = useTypedSelector((state) => state.users);
+
+  const [selectedRowKeys, setSetSelectedRowKeys] = React.useState<number[]>([]);
 
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    console.log("selectedRow ", selectedRows);
     setSetSelectedRowKeys(selectedRowKeys);
     setSelectedUsers(selectedRowKeys);
   };
@@ -23,6 +26,15 @@ const TableUsers: FC = () => {
   const rowSelected = {
     selectedRowKeys,
     onChange: onSelectChange,
+  };
+
+  const clickButton = (username: string, selectedRowKeys?: any) => {
+    const item = users.filter((el) => el.username === username);
+    if (item[0].id) {
+      setSetSelectedRowKeys([item[0].id]);
+      setSelectedUsers([item[0].id]);
+      buttonEdit();
+    }
   };
 
   React.useEffect(() => {
@@ -34,6 +46,11 @@ const TableUsers: FC = () => {
       title: "Name",
       dataIndex: "username",
       width: "50%",
+      render: (text) => (
+        <Button type="link" onClick={() => clickButton(text)}>
+          {text}
+        </Button>
+      ),
     },
     {
       title: "Email",
@@ -61,27 +78,14 @@ const TableUsers: FC = () => {
 
   const data: ISUser[] = tableDate;
 
-  // const hasSelected = selectedRowKeys.length > 0;
-
   return (
     <>
-      {/* <div style={{ marginBottom: 16 }}>
-        <Button type="primary">Создать</Button>
-        <span style={{ marginLeft: 8 }}>
-          {hasSelected ? `Выбрано ${selectedRowKeys.length} строк` : ""}
-        </span>
-      </div> */}
-
       <Table<ISUser>
         columns={column}
         dataSource={data}
         size={"small"}
         rowSelection={rowSelected}
-        // onRow={(record, rowIndex) => {
-        //   return {
-        //     onClick: (e) => console.log(record),
-        //   };
-        // }}
+        loading={isLoading}
       />
     </>
   );

@@ -7,21 +7,39 @@ const { Option } = Select;
 
 interface UserProps {
   submit: (user: ISUser) => void;
+  mode: boolean;
   loading: boolean;
 }
 
 const UserForm: FC<UserProps> = (props: UserProps) => {
-  const [element, setElement] = React.useState<ISUser>({
-    username: "",
+  const [form] = Form.useForm();
+
+  const onFinish = (value: any) => {
+    console.log("value: ", value);
+    props.submit(value);
+    form.resetFields();
+  };
+
+  // const initForm: ISUser = {
+  //   username: "default",
+  //   email: "",
+  //   role: "",
+  //   password: "",
+  // };
+
+  // const initForm: ISUser = {} as ISUser;
+
+  const addInit: ISUser = {
+    username: "add",
     email: "",
     password: "",
     role: "",
-  } as ISUser);
-
-  const onFinish = () => {
-    const submit = element;
-    setElement({} as ISUser);
-    props.submit(submit);
+  };
+  const editInit: ISUser = {
+    username: "edit",
+    email: "",
+    password: "",
+    role: "",
   };
 
   const roles = ["ADMIN", "USER"];
@@ -31,27 +49,21 @@ const UserForm: FC<UserProps> = (props: UserProps) => {
     wrapperCol: { span: 16 },
   };
 
-  // const formItemLayout = {
-  //   labelCol: {
-  //     xs: { span: 16 },
-  //     sm: { span: 8 },
-  //   },
-  //   wrapperCol: {
-  //     xs: { span: 16 },
-  //     sm: { span: 24 },
-  //   },
-  // };
-
   const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
   };
 
   return (
-    <Form {...layout} onFinish={onFinish}>
+    <Form
+      {...layout}
+      onFinish={onFinish}
+      form={form}
+      initialValues={props.mode ? addInit : editInit}
+    >
       <Form.Item label="Имя" name="username" rules={[rules.required()]}>
         <Input
-          value={element.username}
-          onChange={(e) => setElement({ ...element, username: e.target.value })}
+        // value={element.username}
+        // onChange={(e) => setElement({ ...element, username: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -66,8 +78,8 @@ const UserForm: FC<UserProps> = (props: UserProps) => {
         ]}
       >
         <Input
-          value={element.email}
-          onChange={(e) => setElement({ ...element, email: e.target.value })}
+        // value={element.email}
+        // onChange={(e) => setElement({ ...element, email: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -76,8 +88,8 @@ const UserForm: FC<UserProps> = (props: UserProps) => {
         rules={[rules.required(), { min: 5, message: "Не менее 5 символов" }]}
       >
         <Input.Password
-          value={element.password}
-          onChange={(e) => setElement({ ...element, password: e.target.value })}
+        // value={element.password}
+        // onChange={(e) => setElement({ ...element, password: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -102,7 +114,7 @@ const UserForm: FC<UserProps> = (props: UserProps) => {
       <Form.Item label="Role" name="role" rules={[rules.required()]}>
         <Select
           placeholder="select role user"
-          onChange={(role: string) => setElement({ ...element, role: role })}
+          // onChange={(role: string) => setElement({ ...element, role: role })}
         >
           {roles.map((el) => (
             <Option key={el} value={el}>

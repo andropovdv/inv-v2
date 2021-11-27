@@ -1,5 +1,4 @@
 import { ISUser } from "./../models/IUser";
-// import { IUser } from "../models/IUser";
 import { AxiosResponse } from "axios";
 import { $host, $authHost } from ".";
 
@@ -25,5 +24,11 @@ export const UserService = {
       role,
       username,
     });
+  },
+  async deleteUser(ids: any): Promise<AxiosResponse<ISUser[]>> {
+    return $authHost.post("api/user/delete", ids);
+  },
+  async updateUser(user: ISUser): Promise<AxiosResponse<ISUser[]>> {
+    return $authHost.post("api/user/update", user);
   },
 };

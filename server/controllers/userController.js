@@ -3,6 +3,8 @@ import apiError from "./../error/apiError.js";
 import { User } from "./../model/models.js";
 import pkg from "jsonwebtoken";
 import colors from "colors";
+import pk from "sequelize";
+const { Op } = pk;
 
 const { sign } = pkg;
 
@@ -54,24 +56,55 @@ const userController = {
     return res.json(users);
   },
   async register(req, res) {
+    try {
+      const { email, password, username, role } = req.body;
+      if (!email || !password || !username) {
+        return next(apiError.badRequest("Incorrect data"));
+      }
+      const candidate = await User.findOne({ where: { email } });
+      if (candidate) {
+        return next(apiError.badRequest("Already registered"));
+      }
+      const hashPassword = await bcrypt.hash(password, 5);
+      const user = await User.create({
+        email,
+        username,
+        role,
+        password: hashPassword,
+      });
+      const token = generateJwt(user.id, user.email, user.username, user.role);
+      return res.json({ token });
+    } catch (e) {
+      next(apiError(e.message));
+    }
+  },
+  async deleteUser(req, res) {
+    const { id } = req.body;
+    try {
+      const result = await User.destroy({
+        where: {
+          id: {
+            [Op.in]: id,
+          },
+        },
+      });
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async updateUser(req, res) {
     console.log(colors.bgRed.black(req.body));
-    const { email, password, username, role } = req.body;
-    if (!email || !password || !username) {
-      return next(apiError.badRequest("Incorrect data"));
+    const { id, email, username, role } = req.body;
+    try {
+      const result = await User.update(
+        { email: email, username: username, role: role },
+        { where: { id: id } }
+      );
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
     }
-    const candidate = await User.findOne({ where: { email } });
-    if (candidate) {
-      return next(apiError.badRequest("Already registered"));
-    }
-    const hashPassword = await bcrypt.hash(password, 5);
-    const user = await User.create({
-      email,
-      username,
-      role,
-      password: hashPassword,
-    });
-    const token = generateJwt(user.id, user.email, user.username, user.role);
-    return res.json({ token });
   },
 };
 

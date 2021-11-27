@@ -1,52 +1,120 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC } from "react";
-import TableUsers from "../components/TableUsers";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
 import { Button, Modal } from "antd";
-import { useTypedSelector } from "../hooks/useTypedSelector";
-import UserForm from "../components/forms/UserForm";
-import { ISUser } from "../models/IUser";
+import React, { FC } from "react";
+import UserModal from "../components/modals/UserModal";
+import TableUsers from "../components/TableUsers";
 import { useActions } from "../hooks/useActions";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { ISUser } from "../models/IUser";
 
 const Users: FC = () => {
-  const { selected, isLoading } = useTypedSelector((state) => state.users);
-  const { registerUser } = useActions();
+  const { selected, users } = useTypedSelector((state) => state.users);
+  const { registerUser, deleteUser, updateUser, setSelectedUsers } =
+    useActions();
+
   const [visibly, setVisibly] = React.useState(false);
+  const [isAdd, setAdd] = React.useState(true);
+
+  const { confirm } = Modal;
+
+  let item: any = [];
+  let deleteItem: any = [];
+  let editObject: any = [];
+
+  const hasSelected = selected.length > 0;
+  const hasEditSelected = selected.length > 0 && selected.length <= 1;
+
+  if (hasSelected) {
+    selected.forEach((e) => {
+      const elem: any = users.find((el) => el.id === e);
+      deleteItem.push(elem.username);
+    });
+  }
+
+  if (hasEditSelected) {
+    selected.forEach((e) => {
+      const elem: any = users.find((el) => el.id === e);
+      item.push(elem.username);
+    });
+    editObject = users.filter((el) => el.id === selected[0])[0];
+  }
+
+  const showDelete = () => {
+    confirm({
+      title: "Вы действительно хотите удалить",
+      icon: <ExclamationCircleOutlined />,
+      content: deleteItem.map((e: any) => (
+        <div key={uuid()}>
+          <b>{e}</b>
+        </div>
+      )),
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        deleteUser(selected);
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const buttonClick = () => {
+    setAdd(false);
+    setVisibly(true);
+  };
 
   const addUser = (user: ISUser) => {
     registerUser(user.email, user.password, user.role, user.username);
-
-    if (!isLoading) {
-      setVisibly(false);
-    }
+    setVisibly(false);
   };
 
-  const hasSelected = selected.length > 0;
+  const editUser = (user: ISUser) => {
+    const payload = { ...user, id: editObject.id };
+    updateUser(payload);
+    setVisibly(false);
+  };
+
+  const clickAdd = () => {
+    selected.length = 0;
+    setAdd(true);
+    setVisibly(true);
+  };
+  const clickEdit = () => {
+    setAdd(false);
+    setVisibly(true);
+  };
+
   return (
     <>
       <div style={{ marginBottom: 16 }}>
+        <Button type="primary" className="m16button" onClick={clickAdd}>
+          Создать
+        </Button>
         <Button
           type="primary"
           className="m16button"
-          onClick={() => setVisibly(true)}
+          disabled={!hasEditSelected}
+          onClick={clickEdit}
         >
-          Создать
+          Изменить
         </Button>
-        <Button danger disabled={!hasSelected}>
-          Удалить
+        <Button danger disabled={!hasSelected} onClick={showDelete}>
+          {hasSelected ? `Удалить (${selected.length})` : "Удалить"}
         </Button>
-        <span style={{ marginLeft: 8 }}>
-          {hasSelected ? `Выбрано ${selected.length} строк` : ""}
-        </span>
       </div>
-      <TableUsers />
-      <Modal
-        title="Add User"
-        visible={visibly}
-        onCancel={() => setVisibly(false)}
-        footer={null}
-      >
-        <UserForm submit={addUser} loading={isLoading} />
-      </Modal>
+      <TableUsers buttonEdit={buttonClick} />
+      <UserModal
+        mode={isAdd}
+        visibly={visibly}
+        title={isAdd ? "Add user" : "Edit user"}
+        cancelModal={setVisibly}
+        current={editObject}
+        submit={isAdd ? addUser : editUser}
+      />
     </>
   );
 };

@@ -22,7 +22,7 @@ export const UserActionCreator = {
     type: UserActionEnum.SET_USERS_ERROR,
     payload: payload,
   }),
-  setSelectedUsers: (payload: []): SetSelectedUsers => ({
+  setSelectedUsers: (payload: number[]): SetSelectedUsers => ({
     type: UserActionEnum.SET_USERS_SELECTED,
     payload: payload,
   }),
@@ -52,4 +52,39 @@ export const UserActionCreator = {
         dispatch(UserActionCreator.setIsLoading(false));
       }
     },
+  deleteUser: (ids: number[]) => async (dispatch: AppDispatch) => {
+    try {
+      let payload = {
+        id: ids,
+      };
+
+      dispatch(UserActionCreator.setIsLoading(true));
+
+      const { data } = await UserService.deleteUser(payload);
+      if (data) {
+        console.log("УДАЛЕНО", data);
+      }
+      dispatch(UserActionCreator.setSelectedUsers([]));
+      dispatch<any>(UserActionCreator.getUser());
+    } catch (e) {
+      dispatch(UserActionCreator.setError((e as Error).message));
+    } finally {
+      dispatch(UserActionCreator.setIsLoading(false));
+    }
+  },
+  updateUser: (user: ISUser) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(UserActionCreator.setIsLoading(false));
+      const { data } = await UserService.updateUser(user);
+      if (data) {
+        console.log("UPDATED", data);
+      }
+      dispatch(UserActionCreator.setSelectedUsers([]));
+      dispatch<any>(UserActionCreator.getUser());
+    } catch (e) {
+      dispatch(UserActionCreator.setError((e as Error).message));
+    } finally {
+      dispatch(UserActionCreator.setIsLoading(false));
+    }
+  },
 };

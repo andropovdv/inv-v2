@@ -4,7 +4,7 @@ export interface UserState {
   users: ISUser[];
   isLoading: boolean;
   error: string;
-  selected: [];
+  selected: number[];
 }
 
 export enum UserActionEnum {
@@ -31,7 +31,7 @@ export interface SetIsLoadingAction {
 
 export interface SetSelectedUsers {
   type: UserActionEnum.SET_USERS_SELECTED;
-  payload: [];
+  payload: number[];
 }
 
 export type UsersAction =
