@@ -1,14 +1,15 @@
 import bcrypt from "bcrypt";
+
 import apiError from "./../error/apiError.js";
 import { User } from "./../model/models.js";
 import pkg from "jsonwebtoken";
-import colors from "colors";
 import pk from "sequelize";
 const { Op } = pk;
 
 const { sign } = pkg;
 
 import dotenv from "dotenv";
+import errorSQL from "../error/errorSQL.js";
 dotenv.config();
 
 const generateJwt = (id, email, role, username) => {
@@ -18,20 +19,20 @@ const generateJwt = (id, email, role, username) => {
 };
 
 const userController = {
-  async registration(req, res, next) {
-    const { email, password, role } = req.body;
-    if (!email || !password) {
-      return next(apiError.badRequest("Некоректный email или password"));
-    }
-    const candidate = await User.findOne({ where: { email } });
-    if (candidate) {
-      return next(apiError.badRequest("Уже существует"));
-    }
-    const hashPassword = await bcrypt.hash(password, 5);
-    const user = await User.create({ email, role, password: hashPassword });
-    const token = generateJwt(user.id, user.email, user.role);
-    return res.json({ token });
-  },
+  // async registration(req, res, next) {
+  //   const { email, password, role } = req.body;
+  //   if (!email || !password) {
+  //     return next(apiError.badRequest("Некоректный email или password"));
+  //   }
+  //   const candidate = await User.findOne({ where: { email } });
+  //   if (candidate) {
+  //     return next(apiError.badRequest("Уже существует"));
+  //   }
+  //   const hashPassword = await bcrypt.hash(password, 5);
+  //   const user = await User.create({ email, role, password: hashPassword });
+  //   const token = generateJwt(user.id, user.email, user.role);
+  //   return res.json({ token });
+  // },
   async login(req, res, next) {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
@@ -55,15 +56,17 @@ const userController = {
     });
     return res.json(users);
   },
-  async register(req, res) {
+  async register(req, res, next) {
     try {
       const { email, password, username, role } = req.body;
       if (!email || !password || !username) {
-        return next(apiError.badRequest("Incorrect data"));
+        return next(new createError(400, `Incorect data`));
       }
       const candidate = await User.findOne({ where: { email } });
       if (candidate) {
-        return next(apiError.badRequest("Already registered"));
+        return next(
+          new createError(400, `Пользователь с email ${email} уже существует`)
+        );
       }
       const hashPassword = await bcrypt.hash(password, 5);
       const user = await User.create({
@@ -75,7 +78,9 @@ const userController = {
       const token = generateJwt(user.id, user.email, user.username, user.role);
       return res.json({ token });
     } catch (e) {
-      next(apiError(e.message));
+      // createError(400, `Error !!!`);
+      errorSQL(res, e);
+      // next(apiError("Какая-то ошибка"));
     }
   },
   async deleteUser(req, res) {
@@ -94,11 +99,18 @@ const userController = {
     }
   },
   async updateUser(req, res) {
-    console.log(colors.bgRed.black(req.body));
-    const { id, email, username, role } = req.body;
+    const { id, email, username, role, password } = req.body;
     try {
+      if (!password) {
+        const result = await User.update(
+          { email: email, username: username, role: role },
+          { where: { id: id } }
+        );
+        return res.json(result);
+      }
+      const hashPassword = await bcrypt.hash(password, 5);
       const result = await User.update(
-        { email: email, username: username, role: role },
+        { password: hashPassword },
         { where: { id: id } }
       );
       return res.json(result);

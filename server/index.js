@@ -24,7 +24,17 @@ app.get("/", (req, res) => {
   res.send(`<h1>Working</h1>`);
 });
 
-app.use(errorHandle);
+// app.use(errorHandle);
+
+app.use((error, req, res, next) => {
+  console.log(colors.bgRed.black("Error status: ", error.status));
+  console.log(colors.bgRed.black("Message: ", error.message));
+  res.status(error.status);
+  res.json({
+    status: error.status,
+    message: error.message,
+  });
+});
 
 const start = async () => {
   try {

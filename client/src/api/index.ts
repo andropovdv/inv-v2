@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 const $host = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -33,5 +33,25 @@ const authInterceptor = (config: AxiosRequestConfig) => {
 // };
 
 $authHost.interceptors.request.use(authInterceptor);
+
+$authHost.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  (err: AxiosError) => {
+    const status = err.response?.status || 500;
+    switch (status) {
+      case 400: {
+        return Promise.reject(new Error(err.response?.data.message));
+      }
+      case 500: {
+        return Promise.reject(new Error(err.response?.data.message));
+      }
+      default: {
+        return Promise.reject(new Error("test error 500"));
+      }
+    }
+  }
+);
 
 export { $host, $authHost };

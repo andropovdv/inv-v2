@@ -46,7 +46,7 @@ export const UserActionCreator = {
         dispatch(UserActionCreator.setIsLoading(true));
         await UserService.register(email, password, role, username);
         dispatch<any>(UserActionCreator.getUser());
-      } catch (e) {
+      } catch (e: any) {
         dispatch(UserActionCreator.setError((e as Error).message));
       } finally {
         dispatch(UserActionCreator.setIsLoading(false));

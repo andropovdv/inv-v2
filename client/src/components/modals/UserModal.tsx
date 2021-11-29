@@ -6,7 +6,7 @@ import { ISUser } from "../../models/IUser";
 export interface UserProps {
   mode: boolean;
   visibly: boolean;
-  title: string;
+  title: any;
   cancelModal: (v: boolean) => void;
   current?: CurrentRow;
   submit: (user: ISUser) => void;
@@ -50,7 +50,6 @@ const UserModal: FC<UserProps> = (props: UserProps) => {
             .then((values) => {
               submit(values);
               form.resetFields();
-              console.log("Values", values);
             })
             .catch((info) => {
               console.log("Calibration failure:", info);

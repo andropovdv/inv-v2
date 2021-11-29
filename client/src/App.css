@@ -30,3 +30,8 @@
 .m16button {
   margin-right: 8px;
 }
+
+.site-dropdown-context-menu {
+  color: #777;
+  background: #f7f7f7;
+}

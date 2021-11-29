@@ -3,6 +3,7 @@ import First from "../pages/First";
 import Login from "../pages/Login";
 import SPage from "../pages/SPage";
 import Users from "../pages/Users";
+import Vendors from "../pages/Vendors";
 import { RouterNames } from "../utils/consts";
 
 export interface IRoute {
@@ -19,4 +20,5 @@ export const publicRoutes: IRoute[] = [
 export const authRouters: IRoute[] = [
   { path: RouterNames.START_PAGE, exact: true, component: SPage },
   { path: RouterNames.USERS_ROUTE, exact: true, component: Users },
+  { path: RouterNames.VENDORS_ROUTE, exact: true, component: Vendors },
 ];

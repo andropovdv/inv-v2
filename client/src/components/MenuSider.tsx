@@ -5,13 +5,15 @@ import {
   VideoCameraAddOutlined,
   UpOutlined,
 } from "@ant-design/icons";
+import { NavLink } from "react-router-dom";
+import { RouterNames } from "../utils/consts";
 
 const MenuSider: FC = () => {
   return (
     <>
       <Menu theme="dark" mode="inline">
         <Menu.Item key="1" icon={<UserOutlined />}>
-          Nav 1
+          <NavLink to={RouterNames.VENDORS_ROUTE}>Vendors</NavLink>
         </Menu.Item>
         <Menu.Item key="2" icon={<VideoCameraAddOutlined />}>
           Nav 1

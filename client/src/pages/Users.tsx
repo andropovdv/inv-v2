@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
-import { Button, Modal } from "antd";
+import { Button, Modal, Typography, message } from "antd";
 import React, { FC } from "react";
 import UserModal from "../components/modals/UserModal";
 import TableUsers from "../components/TableUsers";
@@ -9,15 +9,22 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { ISUser } from "../models/IUser";
 
+const { Text } = Typography;
+
 const Users: FC = () => {
-  const { selected, users } = useTypedSelector((state) => state.users);
-  const { registerUser, deleteUser, updateUser, setSelectedUsers } =
-    useActions();
+  const { selected, users, error } = useTypedSelector((state) => state.users);
+  const { registerUser, deleteUser, updateUser, setError } = useActions();
 
   const [visibly, setVisibly] = React.useState(false);
   const [isAdd, setAdd] = React.useState(true);
 
   const { confirm } = Modal;
+
+  React.useEffect(() => {
+    if (error.length > 0) {
+      message.error(error, () => setError(""));
+    }
+  }, [error]);
 
   let item: any = [];
   let deleteItem: any = [];
@@ -110,7 +117,13 @@ const Users: FC = () => {
       <UserModal
         mode={isAdd}
         visibly={visibly}
-        title={isAdd ? "Add user" : "Edit user"}
+        title={
+          isAdd ? (
+            <Text type="secondary">Add user</Text>
+          ) : (
+            <Text type="secondary">Edit user</Text>
+          )
+        }
         cancelModal={setVisibly}
         current={editObject}
         submit={isAdd ? addUser : editUser}
