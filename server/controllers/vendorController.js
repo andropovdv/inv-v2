@@ -10,7 +10,6 @@ const vendorController = {
       page = page || 1;
       limit = +limit || 5;
       let offset = page * limit - limit;
-      console.log("OFFSET: ", typeof limit);
       const vendors = await Vendor.findAndCountAll({ limit, offset });
       return res.json(vendors);
     } catch (e) {

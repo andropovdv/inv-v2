@@ -43,6 +43,7 @@ const start = async () => {
       colors.bgGreen.black("Connection has been established successfully.")
     );
     await sequelize.sync();
+    // await sequelize.sync({ alter: true, force: false });
     app.listen(PORT, () => {
       console.log(colors.green(`Server started on ${PORT}...`));
     });

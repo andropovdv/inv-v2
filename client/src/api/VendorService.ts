@@ -5,9 +5,10 @@ import { IOVendor, IVendor } from "../models/IVendor";
 export const VendorService = {
   async getVendor(
     page?: number,
-    limit?: number
+    limit?: number,
+    typeId?: number
   ): Promise<AxiosResponse<IOVendor>> {
-    return $authHost.get("/api/vendor/", { params: { page, limit } });
+    return $authHost.get("/api/vendor/", { params: { page, limit, typeId } });
   },
   async addVendor(name: string): Promise<AxiosResponse<IVendor[]>> {
     return $authHost.post("/api/vendor/add", { name });

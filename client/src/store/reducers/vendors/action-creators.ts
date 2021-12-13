@@ -41,7 +41,6 @@ export const VendorActionCreator = {
       try {
         dispatch(VendorActionCreator.setIsLoading(true));
         const { data } = await VendorService.getVendor(page, limit);
-        console.log(data);
         if (data.rows) {
           dispatch(VendorActionCreator.setVendor(data));
         }
@@ -85,7 +84,7 @@ export const VendorActionCreator = {
       dispatch(VendorActionCreator.setIsLoading(true));
       const { data } = await VendorService.updateVendor(vendor);
       if (data) {
-        dispatch<any>(VendorActionCreator.getVendor());
+        dispatch<any>(VendorActionCreator.getVendor(1));
         dispatch(VendorActionCreator.setSelectedVendor([]));
       }
     } catch (e) {

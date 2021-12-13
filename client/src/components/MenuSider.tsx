@@ -16,10 +16,16 @@ const MenuSider: FC = () => {
           <NavLink to={RouterNames.VENDORS_ROUTE}>Vendors</NavLink>
         </Menu.Item>
         <Menu.Item key="2" icon={<VideoCameraAddOutlined />}>
-          Nav 1
+          <NavLink to={RouterNames.TYPES_ROUTE}>Types</NavLink>
         </Menu.Item>
         <Menu.Item key="3" icon={<UpOutlined />}>
-          Nav 1
+          <NavLink to={RouterNames.DEVICES_ROUTE}>Devices</NavLink>
+        </Menu.Item>
+        <Menu.Item key="4" icon={<UpOutlined />}>
+          <NavLink to={RouterNames.PROPERTY_ROUTE}>Property</NavLink>
+        </Menu.Item>
+        <Menu.Item key="5" icon={<UpOutlined />}>
+          <NavLink to={RouterNames.VALUE_TABLE_ROUTE}>Value Table</NavLink>
         </Menu.Item>
       </Menu>
     </>
