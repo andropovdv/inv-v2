@@ -2,6 +2,7 @@ import { IValue } from "../../../models/IValue";
 
 export interface ValueState {
   values: IValue[];
+  valuesField: IValue[];
   isLoading: boolean;
   error: string;
   selected: number[];
@@ -14,10 +15,16 @@ export enum ValuesActionEnum {
   SET_VALUES_ERROR = "SET_VALUES_ERROR",
   SET_VALUES_SELECTED = "SET_VALUES_SELECTED",
   SET_VALUES_COUNT = "SET_VALUES_COUNT",
+  SET_VALUES_FIELDS = "SET_VALUES_FIELDS",
 }
 
 export interface SetValueAction {
   type: ValuesActionEnum.SET_VALUES;
+  payload: IValue[];
+}
+
+export interface SetValueFieldsAction {
+  type: ValuesActionEnum.SET_VALUES_FIELDS;
   payload: IValue[];
 }
 
@@ -46,4 +53,5 @@ export type ValueAction =
   | SetValueCountAction
   | SetValueErrorAction
   | SetValueIsLoading
-  | SetValueSelectedAction;
+  | SetValueSelectedAction
+  | SetValueFieldsAction;

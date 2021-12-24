@@ -2,11 +2,13 @@ import { TypeService } from "./../../../api/TypeService";
 import { IOType, IType } from "../../../models/IType";
 import { AppDispatch } from "./../../index";
 import {
+  RemoveTypesDropdown,
   SetCountAction,
   SetErrorAction,
   SetIsLoadingAction,
   SetSelectedTypes,
   SetTypesAction,
+  SetTypesDropDownAction,
   TypeActionEnum,
 } from "./types";
 
@@ -14,6 +16,14 @@ export const TypeActionCreator = {
   setType: (type: IOType): SetTypesAction => ({
     type: TypeActionEnum.SET_TYPES,
     payload: type.rows,
+  }),
+  setTypeDropdown: (type: IOType): SetTypesDropDownAction => ({
+    type: TypeActionEnum.SET_TYPES_DROPDOWN,
+    payload: type.rows,
+  }),
+  removeTypeDropDown: (payload: IType[]): RemoveTypesDropdown => ({
+    type: TypeActionEnum.REMOVE_TYPES_DROPDOWN,
+    payload: payload,
   }),
   setCount: (count: IOType): SetCountAction => ({
     type: TypeActionEnum.SET_TYPES_COUNT,
@@ -47,6 +57,23 @@ export const TypeActionCreator = {
       dispatch(TypeActionCreator.setIsLoading(false));
     }
   },
+  getTypeDropdown:
+    (page?: number, limit?: number) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(TypeActionCreator.setIsLoading(true));
+        const { data } = await TypeService.getTypes(page, limit);
+        if (data.rows) {
+          dispatch(TypeActionCreator.setTypeDropdown(data));
+        }
+        if (data.count) {
+          dispatch(TypeActionCreator.setCount(data));
+        }
+      } catch (e) {
+        dispatch(TypeActionCreator.setError((e as Error).message));
+      } finally {
+        dispatch(TypeActionCreator.setIsLoading(false));
+      }
+    },
   addType: (name: string, pref: string) => async (dispatch: AppDispatch) => {
     try {
       dispatch(TypeActionCreator.setIsLoading(true));

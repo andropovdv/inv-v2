@@ -1,13 +1,10 @@
 export interface IValue {
   id?: number;
-  value: string;
-  typeInfoId: number;
-  typeId: number;
-  type: type;
-  type_info: typeInfo;
-  nType: string;
-  nTypeInfo: string;
-  val?: any[];
+  key?: number;
+  name: string;
+  tableValue: type[];
+  typeId?: number;
+  typeInfoId?: number;
 }
 
 export interface IOValue {
@@ -23,5 +20,8 @@ type typeInfo = {
 
 type type = {
   id?: number;
-  name: string;
+  value?: string;
+  typeId: number;
+  typeInfoId: number;
+  type_info: typeInfo;
 };

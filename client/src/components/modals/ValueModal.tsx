@@ -1,44 +1,69 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Form, Input, Modal, Select } from "antd";
+import { Form, Input, Modal, Typography } from "antd";
 import React, { FC } from "react";
 import { useActions } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 import { IValue } from "../../models/IValue";
-import { rules } from "../../utils/rules";
+import PropertyDropDown from "../dropdown/PropertyDropDown";
+import TypesDropDown from "../dropdown/TypesDropDown";
+import StaticScreenValue from "./StaticScreenValue";
 
 interface ValueProps {
   title: any;
   visibly: boolean;
   setVisibly: (v: boolean) => void;
+  setIsAddFeature: (v: boolean) => void;
   submit: (value: IValue) => void;
   current?: CurrentRow;
+  isAdd: boolean;
+  isAddFeature: boolean;
 }
 
 interface CurrentRow {
-  pref: string;
-  perfType: string;
+  value: string;
+  typeId?: number;
+  typeInfoId?: number;
+  id?: number;
+  type?: string;
+  typeInfo?: string;
 }
 
+const { Text } = Typography;
+const { Item } = Form;
+
 const ValueModal: FC<ValueProps> = (props: ValueProps) => {
-  const { title, visibly, current, setVisibly, submit } = props;
+  const {
+    title,
+    visibly,
+    current,
+    setVisibly,
+    submit,
+    isAdd,
+    isAddFeature,
+    setIsAddFeature,
+  } = props;
 
-  const { isLoading } = useTypedSelector((state) => state.values);
-  const { types } = useTypedSelector((state) => state.types);
-  const { propertis } = useTypedSelector((state) => state.propertis);
+  const { isLoading: isLoadingValue } = useTypedSelector(
+    (state) => state.values
+  );
 
-  const { getProperty, getType } = useActions();
-
-  React.useEffect(() => {
-    getProperty();
-    getType();
-  }, []);
+  const { setSelectedValue, removeTypeDropDown } = useActions();
 
   const [form] = Form.useForm();
 
+  React.useEffect(() => {
+    form.resetFields();
+    form.setFieldsValue(current);
+  }, [form, current]);
+
   const closeModal = () => {
     form.resetFields();
+    setSelectedValue([]);
+    removeTypeDropDown([]);
+    setIsAddFeature(false);
     setVisibly(false);
   };
+
   const submitBtn = () => {
     form
       .validateFields()
@@ -55,32 +80,44 @@ const ValueModal: FC<ValueProps> = (props: ValueProps) => {
       destroyOnClose={true}
       title={title}
       visible={visibly}
-      confirmLoading={isLoading}
+      confirmLoading={isLoadingValue}
       onCancel={closeModal}
       onOk={submitBtn}
     >
       <Form name="values" preserve={false} form={form}>
-        <Form.Item name="typeId" rules={[rules.required()]}>
-          <Select>
-            {types.map((el, index) => (
-              <Select.Option key={el.id} value={el.id}>
-                {el.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="typeInfoId" rules={[rules.required()]}>
-          <Select>
-            {propertis.map((el, index) => (
-              <Select.Option key={el.id} value={el.id}>
-                {el.preferense}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="value" rules={[rules.required()]}>
-          <Input placeholder="Value" />
-        </Form.Item>
+        {isAdd ? (
+          <>
+            {isAddFeature ? (
+              <StaticScreenValue
+                title="Тип оборудования:"
+                current={current?.type}
+                nameItem="typeId"
+              />
+            ) : (
+              <TypesDropDown />
+            )}
+            <PropertyDropDown />
+          </>
+        ) : (
+          <>
+            <StaticScreenValue
+              nameItem="typeId"
+              title="Тип оборудования"
+              current={current?.type}
+            />
+            <StaticScreenValue
+              nameItem="typeInfoId"
+              title="Характеристика"
+              current={current?.typeInfo}
+            />
+          </>
+        )}
+        <div>
+          <Text type="secondary">Значение:</Text>
+          <Item name="value">
+            <Input placeholder="Value" />
+          </Item>
+        </div>
       </Form>
     </Modal>
   );

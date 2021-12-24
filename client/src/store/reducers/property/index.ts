@@ -3,6 +3,7 @@ import { PropertyState, PropertyAction, PropertyActionEnum } from "./types";
 
 const initialState: PropertyState = {
   propertis: [] as IProperty[],
+  propertisDropDown: [] as IProperty[],
   isLoading: false,
   error: "",
   selected: [],
@@ -16,6 +17,15 @@ const propertyReducer = (
   switch (action.type) {
     case PropertyActionEnum.SET_PROPERTIES: {
       return { ...state, propertis: action.payload };
+    }
+    case PropertyActionEnum.SET_PROPERTIES_DROPDOWN: {
+      return {
+        ...state,
+        propertisDropDown: [...state.propertisDropDown, ...action.payload],
+      };
+    }
+    case PropertyActionEnum.REMOVE_PROPERTIES_DROPDOWN: {
+      return { ...state, propertisDropDown: action.payload };
     }
     case PropertyActionEnum.SET_PROPERTIES_IS_LOADING: {
       return { ...state, isLoading: action.payload };

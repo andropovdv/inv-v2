@@ -3,6 +3,7 @@ import { IValue } from "../../../models/IValue";
 
 const initialState: ValueState = {
   values: [] as IValue[],
+  valuesField: [] as IValue[],
   isLoading: false,
   error: "",
   selected: [],
@@ -16,6 +17,9 @@ const valueReducer = (
   switch (action.type) {
     case ValuesActionEnum.SET_VALUES: {
       return { ...state, values: action.payload };
+    }
+    case ValuesActionEnum.SET_VALUES_FIELDS: {
+      return { ...state, valuesField: action.payload };
     }
     case ValuesActionEnum.SET_VALUES_IS_LOADING: {
       return { ...state, isLoading: action.payload };

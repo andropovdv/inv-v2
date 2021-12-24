@@ -1,4 +1,4 @@
-import { IProperty } from "./../../../models/IProperty";
+import { IProperty, IOProperty } from "./../../../models/IProperty";
 import { PropertyService } from "./../../../api/PropertyService";
 import { AppDispatch } from "./../../index";
 import {
@@ -8,13 +8,22 @@ import {
   SetPropertyIsLoadingAction,
   SetPropertyErrorAction,
   SetPropertySelectedAction,
+  SetPropertyDropDownAction,
+  RemovePropertyDropDown,
 } from "./types";
-import { IOProperty } from "../../../models/IProperty";
 
 export const PropertyActionCreator = {
   setProperty: (propertis: IOProperty): SetPropertyAction => ({
     type: PropertyActionEnum.SET_PROPERTIES,
     payload: propertis.rows,
+  }),
+  setPropertyDropdown: (property: IOProperty): SetPropertyDropDownAction => ({
+    type: PropertyActionEnum.SET_PROPERTIES_DROPDOWN,
+    payload: property.rows,
+  }),
+  removePropertyDropdown: (payload: IProperty[]): RemovePropertyDropDown => ({
+    type: PropertyActionEnum.REMOVE_PROPERTIES_DROPDOWN,
+    payload: payload,
   }),
   setCountProperty: (count: IOProperty): SetPropertyCountAction => ({
     type: PropertyActionEnum.SET_PROPERTIES_COUNT,
@@ -39,6 +48,21 @@ export const PropertyActionCreator = {
         const { data } = await PropertyService.getProperty(page, limit);
         if (data) {
           dispatch(PropertyActionCreator.setProperty(data));
+          dispatch(PropertyActionCreator.setCountProperty(data));
+        }
+      } catch (e) {
+        dispatch(PropertyActionCreator.setErrorProperty((e as Error).message));
+      } finally {
+        dispatch(PropertyActionCreator.setIsLoadingProperty(false));
+      }
+    },
+  getPropertyDropdown:
+    (page?: number, limit?: number) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(PropertyActionCreator.setIsLoadingProperty(true));
+        const { data } = await PropertyService.getProperty(page, limit);
+        if (data) {
+          dispatch(PropertyActionCreator.setPropertyDropdown(data));
           dispatch(PropertyActionCreator.setCountProperty(data));
         }
       } catch (e) {

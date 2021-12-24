@@ -1,81 +1,137 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table } from "antd";
-import { v4 as uuid } from "uuid";
+import { Button, Col, Row, Space, Table } from "antd";
 
 import React, { FC } from "react";
 import { ColumnsType } from "antd/es/table";
 import { useActions } from "../hooks/useActions";
 import { IValue } from "../models/IValue";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import { pagination } from "../utils/consts";
 
-const TabValueTable: FC = () => {
-  const { getValue } = useActions();
-  const { values } = useTypedSelector((state) => state.values);
+interface ValueProps {
+  editBtn: (r: IValue[]) => void;
+  createBtn: (r: any[]) => void;
+}
+
+const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
+  const { editBtn, createBtn } = props;
+  const { getValue, setSelectedValue } = useActions();
+  const { values, selected, count } = useTypedSelector((state) => state.values);
 
   React.useEffect(() => {
     getValue();
   }, []);
 
-  // const tableData: IValue[] = values.map((el) => ({
-  //   ...el,
-  //   key: el.id,
-  //   nType: el.type.name,
-  //   nTypeInfo: el.type_info.preferense,
-  // }));
+  const [selectedRowKeys, setSetSelectedRowKeys] = React.useState<number[]>([]);
 
-  const map: IValue[] = values.reduce((acc: any, cur: any) => {
-    acc[cur.typeId] = acc[cur.typeId] || {
-      id: cur.typeId,
-      key: cur.typeId,
-      nType: "",
-      val: [],
-    };
-    acc[cur.typeId].nType = cur.type.name;
-    acc[cur.typeId].val.push({
-      pref: cur.type_info.preferense,
-      perfType: cur.type_info.type_preferense,
-      value: cur.value,
-    });
-    return acc;
-  }, {});
+  const onSelectChange = (selectedRowKeys: any) => {
+    setSetSelectedRowKeys(selectedRowKeys);
+    setSelectedValue(selectedRowKeys);
+  };
 
-  const result = Object.values(map);
+  const rowSelected = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
 
-  const recordInfo = (val: any) => {
+  const btnEdit = (row: any) => {
+    editBtn(row.key);
+  };
+
+  // TODO имеет смысл вынести в отдельный компонент ?
+  const recordInfo = (val: IValue) => {
     const column = [
-      { title: "Хар-ка", dataIndex: "pref", key: val.id, width: "15%" },
-      { title: "Тип хар-ки", dataIndex: "perfType", key: val.id },
+      { title: "Хар-ка", dataIndex: "preferense", key: val.id, width: "15%" },
+      { title: "Тип хар-ки", dataIndex: "type_preferense", key: val.id },
       { title: "Значение", dataIndex: "value", key: val.id },
+      {
+        title: "Action",
+        dataIndex: "action",
+        render: (_: any, record: any) => (
+          <Button type="link" onClick={() => btnEdit(record)}>
+            Edit feature
+          </Button>
+        ),
+      },
     ];
     const data: any = [];
-    val.val.map((el: any) => data.push({ ...el, key: uuid() }));
+    val.tableValue.map((el) =>
+      data.push({
+        preferense: el.type_info.preferense,
+        type_preferense: el.type_info.type_preferense,
+        value: el.value,
+        key: el.id,
+      })
+    );
     return (
       <Table
         columns={column}
         dataSource={data}
         pagination={false}
+        rowSelection={{
+          ...rowSelected,
+          hideSelectAll: true,
+        }}
         size="small"
       />
     );
   };
 
+  const tableData: IValue[] = values.map((el: IValue) => ({
+    ...el,
+    key: el.id,
+  }));
+
   const column: ColumnsType<IValue> = [
-    { title: "Type(Тип оборудования)", dataIndex: "nType" },
-    // { title: "TypeInfo(Наименвание хар-ки)", dataIndex: "nTypeInfo" },
-    // { title: "Value", dataIndex: "value" },
+    {
+      title: "Type(Тип оборудования)",
+      dataIndex: "name",
+      width: "15%",
+    },
+    {
+      title: "Action",
+      dataIndex: "operation",
+      render: (_, record: any) => (
+        <Space size="middle">
+          <Button
+            type="link"
+            disabled={selected.length > 0}
+            onClick={() => createBtn(record)}
+          >
+            Add feature
+          </Button>
+        </Space>
+      ),
+    },
   ];
+
+  const changePage = (page: number) => {
+    getValue(page, pagination.pageSize);
+  };
+
+  let paginationOption = {
+    total: count,
+    pageSize: pagination.pageSize,
+    onChange: (page: number) => changePage(page),
+    hideOnSinglePage: true,
+  };
 
   return (
     <div style={{ marginTop: 16 }}>
       <Table<IValue>
         columns={column}
-        dataSource={result}
+        dataSource={tableData}
         size="small"
         expandable={{
           expandedRowRender: recordInfo,
-          rowExpandable: (record) => record.val?.length !== 0,
+          rowExpandable: (record: IValue) => record.tableValue?.length !== 0,
         }}
+        pagination={paginationOption}
       />
+      <Row>
+        <Col span={12}>span 12-1</Col>
+        <Col span={12}>span 12-2</Col>
+      </Row>
     </div>
   );
 };

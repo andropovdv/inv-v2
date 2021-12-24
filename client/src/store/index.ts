@@ -6,11 +6,16 @@ import {
 } from "redux";
 import thunk, { ThunkAction } from "redux-thunk";
 import reducers from "./reducers";
-import logger from "redux-logger";
+// import logger from "redux-logger";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const rootReducers = combineReducers(reducers);
 
-export const store = createStore(rootReducers, applyMiddleware(thunk, logger));
+// export const store = createStore(rootReducers, applyMiddleware(thunk, logger));
+export const store = createStore(
+  rootReducers,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 // export const store = createStore(rootReducers, applyMiddleware(thunk));
 

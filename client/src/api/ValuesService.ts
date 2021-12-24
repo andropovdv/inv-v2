@@ -5,16 +5,13 @@ import { AxiosResponse } from "axios";
 export const ValuesService = {
   async getValue(
     page?: number,
-    limit?: number
+    limit?: number,
+    typeId?: number
   ): Promise<AxiosResponse<IOValue>> {
-    return $authHost.get("/api/value/", { params: { page, limit } });
+    return $authHost.get("/api/value/", { params: { page, limit, typeId } });
   },
-  async addValue(
-    value: string,
-    typeId: number,
-    typeInfoId: number
-  ): Promise<AxiosResponse<IOValue>> {
-    return $authHost.post("/api/value/add", { value, typeId, typeInfoId });
+  async addValue(payload: IValue): Promise<AxiosResponse<IOValue>> {
+    return $authHost.post("/api/value/add", { payload });
   },
   async updateValue(value: IValue): Promise<AxiosResponse<IValue>> {
     return $authHost.put("/api/value/update", value);

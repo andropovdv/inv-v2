@@ -1,11 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Modal, Form, Select, Skeleton, Input, Button, Space } from "antd";
+import {
+  Modal,
+  Form,
+  Select,
+  Skeleton,
+  Input,
+  Button,
+  Space,
+  Typography,
+  Spin,
+  Row,
+  Col,
+} from "antd";
 import React, { FC } from "react";
 import { useActions } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 import { IDevice } from "../../models/IDevice";
 import { rules } from "../../utils/rules";
+
+const { Text } = Typography;
 
 interface DeviceProps {
   visibly: boolean;
@@ -16,24 +30,31 @@ interface DeviceProps {
 
 const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
   const { getValue } = useActions();
-  const { values } = useTypedSelector((state) => state.values);
+  const { values, isLoading, valuesField } = useTypedSelector(
+    (state) => state.values
+  );
 
   const { visibly, title, setVisibly, submit } = props;
   const [form] = Form.useForm();
 
   // start test array form
   const [arrayField, setArrayField] = React.useState<any[]>([]);
+  const [val, setVal] = React.useState();
 
   React.useEffect(() => {
-    getValue();
-    getType();
+    // getValue();
+    // getType();
     getVendor();
   }, []);
-  // let arrayField: any[] = [];
-  const getPrefById = (val: any) => {
-    setArrayField([]);
+
+  React.useEffect(() => {
     getValue(undefined, undefined, val);
-    var map = values.reduce((acc: any, cur: any) => {
+    // createFieldsForm();
+  }, [val]);
+
+  const createFieldsForm = () => {
+    console.log("end isLoading:", isLoading);
+    const map = valuesField.reduce((acc: any, cur: any) => {
       acc[cur.typeInfoId] = acc[cur.typeInfoId] || {
         id: cur.typeInfoId,
         propOne: "",
@@ -45,9 +66,15 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
       acc[cur.typeInfoId].val.push(cur.value);
       return acc;
     }, {});
-    var result = Object.values(map);
+    const result = Object.values(map);
+    console.log("Result: ", result);
     setArrayField(result);
-    console.log("values: ", result);
+    console.log("finish isLoading:", isLoading);
+  };
+
+  // let arrayField: any[] = [];
+  const getPrefById = (val: any) => {
+    setVal(val);
   };
 
   // end test array form
@@ -69,7 +96,7 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
 
   const submitBtn = () => {
     form.validateFields().then((values) => {
-      submit(values);
+      // submit(values);
       console.log("values:", values);
       form.resetFields();
     });
@@ -96,7 +123,8 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
             ) : (
               <Select
                 placeholder="Тип оборудования"
-                onChange={(val) => getPrefById(val)}
+                onSelect={(val) => getPrefById(val)}
+                // onChange={(val) => getPrefById(val)}
               >
                 {types.map((el) => (
                   <Select.Option key={el.id} value={el.id ? el.id : ""}>
@@ -126,7 +154,44 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
           <Form.Item name="name" rules={[rules.required()]}>
             <Input placeholder="Модель" />
           </Form.Item>
-          {arrayField.map((el, index) => (
+          {isLoading ? (
+            <Space size="large">
+              <Text type="secondary">Loading</Text>
+              <Spin size="large" />
+            </Space>
+          ) : (
+            <>
+              {valuesField.map((el: any, index) => (
+                <Row key={el.id}>
+                  <Col span={6}>
+                    <Form.Item
+                      name={["info", index, "title"]}
+                      initialValue={el.propOne}
+                    >
+                      <Text>{`${el.propOne}:`}</Text>
+                      {/* <Input disabled bordered={false} /> */}
+                    </Form.Item>
+                  </Col>
+                  <Col span={18}>
+                    <Form.Item name={["info", index, "desc"]}>
+                      {el.propType === "STRING" ? (
+                        <Input />
+                      ) : (
+                        <Select placeholder="Choose">
+                          {el.val.map((e: any, index: any) => (
+                            <Select.Option key={index} value={e ? e : "not"}>
+                              {e}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Col>
+                </Row>
+              ))}
+            </>
+          )}
+          {/* {arrayField.map((el, index) => (
             <Space>
               <Form.Item
                 name={["info", index, "title"]}
@@ -148,7 +213,7 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
                 )}
               </Form.Item>
             </Space>
-          ))}
+          ))} */}
         </Form>
       </Modal>
     </div>

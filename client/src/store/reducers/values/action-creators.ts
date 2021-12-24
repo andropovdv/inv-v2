@@ -19,6 +19,10 @@ export const ValueActionCreator = {
     type: ValuesActionEnum.SET_VALUES_COUNT,
     payload: count.count,
   }),
+  setFieldValue: (field: IValue) => ({
+    type: ValuesActionEnum.SET_VALUES_FIELDS,
+    payload: field,
+  }),
   setIsLoadingValue: (payload: boolean): SetValueIsLoading => ({
     type: ValuesActionEnum.SET_VALUES_IS_LOADING,
     payload: payload,
@@ -36,10 +40,27 @@ export const ValueActionCreator = {
     async (dispatch: AppDispatch) => {
       try {
         dispatch(ValueActionCreator.setIsLoadingValue(true));
-        const { data } = await ValuesService.getValue(page, limit);
+        const { data } = await ValuesService.getValue(page, limit, typeId);
         if (data) {
-          dispatch(ValueActionCreator.setValue(data));
-          dispatch(ValueActionCreator.setCountValue(data));
+          if (typeId) {
+            const map: any = data.rows.reduce((acc: any, cur: any) => {
+              acc[cur.typeInfoId] = acc[cur.typeInfoId] || {
+                id: cur.typeInfoId,
+                propOne: "",
+                propType: "",
+                val: [],
+              };
+              acc[cur.typeInfoId].propOne = cur.type_info.preferense;
+              acc[cur.typeInfoId].propType = cur.type_info.type_preferense;
+              acc[cur.typeInfoId].val.push(cur.value);
+              return acc;
+            }, {});
+            const result: any = Object.values(map);
+            dispatch<any>(ValueActionCreator.setFieldValue(result));
+          } else {
+            dispatch(ValueActionCreator.setValue(data));
+            dispatch(ValueActionCreator.setCountValue(data));
+          }
         }
       } catch (e) {
         dispatch(ValueActionCreator.setErrorValue((e as Error).message));
@@ -47,19 +68,17 @@ export const ValueActionCreator = {
         dispatch(ValueActionCreator.setIsLoadingValue(false));
       }
     },
-  addValue:
-    (value: string, typeId: number, typeInfoId: number) =>
-    async (dispatch: AppDispatch) => {
-      try {
-        dispatch(ValueActionCreator.setIsLoadingValue(true));
-        await ValuesService.addValue(value, typeId, typeInfoId);
-        await dispatch<any>(ValueActionCreator.getValue(1));
-      } catch (e) {
-        dispatch(ValueActionCreator.setErrorValue((e as Error).message));
-      } finally {
-        dispatch(ValueActionCreator.setIsLoadingValue(false));
-      }
-    },
+  addValue: (payload: IValue) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(ValueActionCreator.setIsLoadingValue(true));
+      await ValuesService.addValue(payload);
+      await dispatch<any>(ValueActionCreator.getValue(1));
+    } catch (e) {
+      dispatch(ValueActionCreator.setErrorValue((e as Error).message));
+    } finally {
+      dispatch(ValueActionCreator.setIsLoadingValue(false));
+    }
+  },
   deleteValue: (ids: number[]) => async (dispatch: AppDispatch) => {
     try {
       dispatch(ValueActionCreator.setIsLoadingValue(true));

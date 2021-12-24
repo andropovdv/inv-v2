@@ -39,13 +39,13 @@ export const DeviceInfo = sequelize.define("device_info", {
 
 export const TableValue = sequelize.define("table_value", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  value: { type: DataTypes.STRING, unique: true, allowNull: false },
+  value: { type: DataTypes.STRING, unique: true },
 });
 
-TypeInfo.hasMany(TableValue);
+TypeInfo.hasMany(TableValue, { as: "TypeInfo" });
 TableValue.belongsTo(TypeInfo);
 
-Type.hasMany(TableValue);
+Type.hasMany(TableValue, { as: "tableValue" });
 TableValue.belongsTo(Type);
 
 Type.hasMany(Device);

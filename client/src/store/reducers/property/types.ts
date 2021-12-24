@@ -2,6 +2,7 @@ import { IProperty } from "../../../models/IProperty";
 
 export interface PropertyState {
   propertis: IProperty[];
+  propertisDropDown: IProperty[];
   isLoading: boolean;
   error: string;
   selected: number[];
@@ -14,10 +15,22 @@ export enum PropertyActionEnum {
   SET_PROPERTIES_ERROR = "SET_PROPERTIES_ERROR",
   SET_PROPERTIES_SELECTED = "SET_PROPERTIES_SELECTED",
   SET_PROPERTIES_COUNT = "SET_PROPERTIES_COUNT",
+  SET_PROPERTIES_DROPDOWN = "SET_PROPERTIES_DROPDOWN",
+  REMOVE_PROPERTIES_DROPDOWN = "REMOVE_PROPERTIES_DROPDOWN",
 }
 
 export interface SetPropertyAction {
   type: PropertyActionEnum.SET_PROPERTIES;
+  payload: IProperty[];
+}
+
+export interface SetPropertyDropDownAction {
+  type: PropertyActionEnum.SET_PROPERTIES_DROPDOWN;
+  payload: IProperty[];
+}
+
+export interface RemovePropertyDropDown {
+  type: PropertyActionEnum.REMOVE_PROPERTIES_DROPDOWN;
   payload: IProperty[];
 }
 
@@ -46,4 +59,6 @@ export type PropertyAction =
   | SetPropertyCountAction
   | SetPropertyErrorAction
   | SetPropertyIsLoadingAction
-  | SetPropertySelectedAction;
+  | SetPropertySelectedAction
+  | SetPropertyDropDownAction
+  | RemovePropertyDropDown;
