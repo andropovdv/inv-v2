@@ -26,20 +26,6 @@ const valueController = {
             },
           ],
         });
-        // result = await TableValue.findAll({
-        //   include: [
-        //     {
-        //       model: Type,
-        //       required: false,
-        //     },
-        //     {
-        //       model: TypeInfo,
-        //       required: false,
-        //     },
-        //   ],
-        //   limit,
-        //   offset,
-        // });
       }
       if (typeId) {
         const type = Number(typeId);
@@ -51,7 +37,7 @@ const valueController = {
             {
               model: TypeInfo,
               required: false,
-              attributes: ["id", "preferense", "type_preferense"],
+              attributes: ["id", "preferense", "type_preferense", "unit"],
             },
           ],
         });
@@ -72,14 +58,14 @@ const valueController = {
         value = "";
       }
       const uni = await TableValue.findOne({
-        where: { typeId, typeInfoId },
+        where: { typeInfoId, value },
       });
-      console.log("uni:", uni);
       if (uni) {
+        const typeInfo = await TypeInfo.findOne({ where: { id: typeInfoId } });
         return next(
           new createError(
             400,
-            `Значение ${value} в типе ${typeId} уже присутствует`
+            `Значение ${value} в характеристике ${typeInfo.preferense} уже присутствует`
           )
         );
       }

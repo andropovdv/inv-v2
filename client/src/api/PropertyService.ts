@@ -11,9 +11,10 @@ export const PropertyService = {
   },
   async addProperty(
     name: string,
-    type: string
+    type: string,
+    unit?: string
   ): Promise<AxiosResponse<IOProperty>> {
-    return $authHost.post("/api/property/add", { name, type });
+    return $authHost.post("/api/property/add", { name, type, unit });
   },
   async updateProperty(
     property: IProperty

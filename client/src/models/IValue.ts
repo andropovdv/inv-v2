@@ -1,10 +1,14 @@
 export interface IValue {
-  id?: number;
+  id: number;
   key?: number;
   name: string;
   tableValue: type[];
   typeId?: number;
   typeInfoId?: number;
+  unit?: string;
+  propOne?: string;
+  propType?: string;
+  val?: any[];
 }
 
 export interface IOValue {

@@ -26,6 +26,7 @@ const Properties: FC = () => {
 
   const [visibly, setVisibly] = React.useState(false);
   const [isAdd, setIsAdd] = React.useState(true);
+  const [row, setRow] = React.useState({} as IProperty);
 
   React.useEffect(() => {
     if (error.length > 0) {
@@ -34,9 +35,9 @@ const Properties: FC = () => {
   }, [error]);
 
   const hasSelected = selected.length > 0;
-  const hasEditSelected = selected.length > 0 && selected.length <= 1;
+  // const hasEditSelected = selected.length > 0 && selected.length <= 1;
 
-  let item: any = [];
+  // let item: any = [];
   let editRow: any = [];
   let deleteRow: any = [];
 
@@ -47,13 +48,13 @@ const Properties: FC = () => {
     });
   }
 
-  if (hasEditSelected) {
-    selected.forEach((e) => {
-      const elem: any = propertis.find((el) => el.id === e);
-      item.push(elem.name);
-    });
-    editRow = propertis.filter((el) => el.id === selected[0])[0];
-  }
+  // if (hasEditSelected) {
+  //   selected.forEach((e) => {
+  //     const elem: any = propertis.find((el) => el.id === e);
+  //     item.push(elem.name);
+  //   });
+  //   editRow = propertis.filter((el) => el.id === selected[0])[0];
+  // }
 
   const showDeleteModal = () => {
     confirm({
@@ -79,7 +80,12 @@ const Properties: FC = () => {
     setIsAdd(true);
     setVisibly(true);
   };
-  const updateBtn = () => {
+  const updateBtn = (row: number) => {
+    const elem: any = propertis.find((el: IProperty) => el.id === row);
+    console.log("elem:", elem);
+    if (elem) {
+      setRow(elem);
+    }
     setIsAdd(false);
     setVisibly(true);
   };
@@ -89,7 +95,7 @@ const Properties: FC = () => {
     setVisibly(false);
   };
   const updateProp = (value: IProperty) => {
-    const payload = { ...value, id: editRow.id };
+    const payload = { ...value, id: row.id };
     updateProperty(payload);
     setSelectedProperty([]);
     setVisibly(false);
@@ -104,9 +110,9 @@ const Properties: FC = () => {
         <Button type="primary" onClick={createBtn}>
           Create
         </Button>
-        <Button type="primary" disabled={!hasEditSelected} onClick={updateBtn}>
+        {/* <Button type="primary" disabled={!hasEditSelected} onClick={updateBtn}>
           Update
-        </Button>
+        </Button> */}
         <Button danger disabled={!hasSelected} onClick={showDeleteModal}>
           {hasSelected ? `Remove (${selected.length})` : "Remove"}
         </Button>
@@ -123,7 +129,7 @@ const Properties: FC = () => {
         visibly={visibly}
         setVisibly={setVisibly}
         submit={isAdd ? createProp : updateProp}
-        current={editRow}
+        current={row}
       />
     </div>
   );

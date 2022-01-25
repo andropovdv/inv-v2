@@ -83,10 +83,11 @@ const Vendors: FC = () => {
       okText: "Yes",
       okType: "danger",
       onOk() {
+        setSelectedVendor([]);
         deleteVendor(selected);
       },
       onCancel() {
-        console.log("Cancel");
+        setSelectedVendor([]);
       },
     });
   };

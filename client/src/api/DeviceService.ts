@@ -18,7 +18,13 @@ export const DeviceService = {
     console.log(name, typeId, vendorId, info);
     return $authHost.post("/api/device/add", { name, typeId, vendorId, info });
   },
-  async updateDevice() {},
+  async updateDevice(
+    id: number,
+    name: string,
+    info: any
+  ): Promise<AxiosResponse<IDevice>> {
+    return $authHost.put("/api/device/update", { id, name, info });
+  },
   async deleteDevice(ids: any): Promise<AxiosResponse<IDevice>> {
     return $authHost.post("/api/device/delete", ids);
   },

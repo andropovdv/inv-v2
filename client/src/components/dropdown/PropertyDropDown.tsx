@@ -21,6 +21,7 @@ const PropertyDropDown: FC = () => {
   const pageCount = Math.ceil(count / pagination.pageSize);
 
   const onFocus = () => {
+    removePropertyDropdown([]);
     setPage(1);
     getPropertyDropdown();
     if (!isLoading) {
@@ -30,7 +31,7 @@ const PropertyDropDown: FC = () => {
 
   const onBlur = () => {
     setIsOpen(false);
-    removePropertyDropdown([]);
+    // removePropertyDropdown([]);
   };
 
   const nextPage = (e: any) => {
@@ -85,4 +86,4 @@ const PropertyDropDown: FC = () => {
   );
 };
 
-export default PropertyDropDown;
+export default React.memo(PropertyDropDown);

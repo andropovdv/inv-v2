@@ -7,6 +7,8 @@ import {
   SetErrorAction,
   SetSelectedVendors,
   SetCountAction,
+  SetVendorsDropDownAction,
+  RemoveVendorsDropDownAction,
 } from "./types";
 import { IVendor } from "../../../models/IVendor";
 import { VendorService } from "../../../api/VendorService";
@@ -16,14 +18,18 @@ export const VendorActionCreator = {
     type: VendorActionEnum.SET_VENDORS,
     payload: vendors.rows,
   }),
+  setVendorDropDown: (vendors: IOVendor): SetVendorsDropDownAction => ({
+    type: VendorActionEnum.SET_VENDORS_DROPDOWN,
+    payload: vendors.rows,
+  }),
+  removeVendorDropDown: (payload: IVendor[]): RemoveVendorsDropDownAction => ({
+    type: VendorActionEnum.REMOVE_VENDORS_DROPDOWN,
+    payload: payload,
+  }),
   setCount: (count: IOVendor): SetCountAction => ({
     type: VendorActionEnum.SET_VENDORS_COUNT,
     payload: count.count,
   }),
-  // setVendor: (vendors: IVendor[]): SetVendorsAction => ({
-  //   type: VendorActionEnum.SET_VENDORS,
-  //   payload: vendors,
-  // }),
   setIsLoading: (payload: boolean): SetIsLoadingAction => ({
     type: VendorActionEnum.SET_VENDORS_IS_LOADING,
     payload: payload,
@@ -43,6 +49,23 @@ export const VendorActionCreator = {
         const { data } = await VendorService.getVendor(page, limit);
         if (data.rows) {
           dispatch(VendorActionCreator.setVendor(data));
+        }
+        if (data.count) {
+          dispatch(VendorActionCreator.setCount(data));
+        }
+      } catch (e) {
+        dispatch(VendorActionCreator.setError((e as Error).message));
+      } finally {
+        dispatch(VendorActionCreator.setIsLoading(false));
+      }
+    },
+  getVendorDropdown:
+    (page?: number, limit?: number) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(VendorActionCreator.setIsLoading(true));
+        const { data } = await VendorService.getVendor(page, limit);
+        if (data.rows) {
+          dispatch(VendorActionCreator.setVendorDropDown(data));
         }
         if (data.count) {
           dispatch(VendorActionCreator.setCount(data));

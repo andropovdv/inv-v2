@@ -15,9 +15,11 @@ interface CurrentRow {
   value: string;
   typeId?: number;
   typeInfoId?: number;
-  id?: number;
+  id: number;
   type?: string;
   typeInfo?: string;
+  unit?: string;
+  typePref?: string;
 }
 
 const ValueTable: FC = () => {
@@ -31,7 +33,6 @@ const ValueTable: FC = () => {
     updateValue,
     setSelectedValue,
     removeTypeDropDown,
-    getTypeDropdown,
   } = useActions();
 
   const [visibly, setVisibly] = React.useState(false);
@@ -85,8 +86,7 @@ const ValueTable: FC = () => {
   const createBtnFeature = (val: any) => {
     setIsAdd(true);
     setIsAddFeature(true);
-    getTypeDropdown();
-    setRowEdit({ typeId: val?.id, value: "", type: val.name });
+    setRowEdit({ typeId: val?.id, value: "", type: val.name, id: val.id });
     setVisibly(true);
   };
 
@@ -104,6 +104,8 @@ const ValueTable: FC = () => {
         typeInfoId: elem[0].typeInfoId,
         type: findTypeById(elem[0].typeId),
         typeInfo: elem[0].type_info.preferense,
+        unit: elem[0].type_info.unit,
+        typePref: elem[0].type_info.type_preferense,
       });
     }
     removeTypeDropDown([]);
@@ -180,4 +182,4 @@ const ValueTable: FC = () => {
   );
 };
 
-export default ValueTable;
+export default React.memo(ValueTable);

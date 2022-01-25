@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { v4 as uuid } from "uuid";
 import React, { FC } from "react";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -9,7 +8,7 @@ import { IType } from "../models/IType";
 import { pagination } from "../utils/consts";
 
 interface TypeProps {
-  editBtn: () => void;
+  editBtn: (val: IType) => void;
 }
 
 const TableTypes: FC<TypeProps> = (props: TypeProps) => {
@@ -33,12 +32,9 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
     onChange: onSelectChange,
   };
 
-  const buttonEdit = (name: string) => {
-    const item = types.filter((el) => el.name === name);
-    if (item[0].id) {
-      setSetSelectedRowKeys([item[0].id]);
-      setSelectedTypes([item[0].id]);
-      editBtn();
+  const buttonEdit = (val: IType) => {
+    if (val) {
+      editBtn(val);
     }
   };
 
@@ -46,9 +42,14 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
     {
       title: "Name",
       dataIndex: "name",
-      render: (text) => (
-        <Button type="link" onClick={() => buttonEdit(text)}>
-          {text}
+      width: "20%",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (_, record: any) => (
+        <Button type="link" onClick={() => buttonEdit(record)}>
+          Edit type
         </Button>
       ),
     },
@@ -67,28 +68,6 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
     hideOnSinglePage: true,
   };
 
-  const recordInfo = (val: any) => {
-    const column = [
-      {
-        title: "Характеристика",
-        dataIndex: "preferense",
-        key: val.id,
-        width: "15%",
-      },
-      { title: "Тип поля", dataIndex: "type_preferense", key: val.id },
-    ];
-    const data: any = [];
-    val.pref.map((el: any) => data.push({ ...el, key: uuid() }));
-    return (
-      <Table
-        columns={column}
-        dataSource={data}
-        pagination={false}
-        size="small"
-      />
-    );
-  };
-
   return (
     <>
       <Table
@@ -96,12 +75,8 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
         dataSource={tableDate}
         size="small"
         loading={isLoading}
-        rowSelection={rowSelected}
+        rowSelection={{ ...rowSelected, hideSelectAll: true }}
         pagination={paginationOptions}
-        // expandable={{
-        //   expandedRowRender: recordInfo,
-        //   rowExpandable: (record) => record.pref.length !== 0,
-        // }}
       />
     </>
   );

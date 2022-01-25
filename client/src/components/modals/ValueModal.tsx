@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Form, Input, Modal, Typography } from "antd";
+import { Form, Input, Modal } from "antd";
 import React, { FC } from "react";
 import { useActions } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
@@ -26,9 +26,10 @@ interface CurrentRow {
   id?: number;
   type?: string;
   typeInfo?: string;
+  unit?: string;
+  typePref?: string;
 }
 
-const { Text } = Typography;
 const { Item } = Form;
 
 const ValueModal: FC<ValueProps> = (props: ValueProps) => {
@@ -46,6 +47,7 @@ const ValueModal: FC<ValueProps> = (props: ValueProps) => {
   const { isLoading: isLoadingValue } = useTypedSelector(
     (state) => state.values
   );
+  const { propertisDropDown } = useTypedSelector((state) => state.propertis);
 
   const { setSelectedValue, removeTypeDropDown } = useActions();
 
@@ -57,11 +59,11 @@ const ValueModal: FC<ValueProps> = (props: ValueProps) => {
   }, [form, current]);
 
   const closeModal = () => {
+    setVisibly(false);
     form.resetFields();
     setSelectedValue([]);
     removeTypeDropDown([]);
     setIsAddFeature(false);
-    setVisibly(false);
   };
 
   const submitBtn = () => {
@@ -89,7 +91,7 @@ const ValueModal: FC<ValueProps> = (props: ValueProps) => {
           <>
             {isAddFeature ? (
               <StaticScreenValue
-                title="Тип оборудования:"
+                title="Тип оборудования"
                 current={current?.type}
                 nameItem="typeId"
               />
@@ -112,15 +114,28 @@ const ValueModal: FC<ValueProps> = (props: ValueProps) => {
             />
           </>
         )}
-        <div>
-          <Text type="secondary">Значение:</Text>
-          <Item name="value">
-            <Input placeholder="Value" />
-          </Item>
-        </div>
+        <Item
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.typeInfoId !== currentValues.typeInfoId
+          }
+        >
+          {() => {
+            const typePref = propertisDropDown.find(
+              (el) => el.id === form.getFieldValue("typeInfoId")
+            );
+            if (typePref?.type_preferense !== "STRING") {
+              return (
+                <Item name="value">
+                  <Input />
+                </Item>
+              );
+            }
+            return null;
+          }}
+        </Item>
       </Form>
     </Modal>
   );
 };
 
-export default ValueModal;
+export default React.memo(ValueModal);

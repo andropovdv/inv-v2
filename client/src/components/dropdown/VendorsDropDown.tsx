@@ -1,25 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { MoreOutlined } from "@ant-design/icons";
-import { Divider, Form, Select } from "antd";
 import React, { FC } from "react";
-import { useActions } from "../../hooks/useActions";
+import { Divider, Form, Select } from "antd";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
+import { useActions } from "../../hooks/useActions";
 import { pagination } from "../../utils/consts";
 import { rules } from "../../utils/rules";
+import { MoreOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { Item } = Form;
 
-interface Props {
-  onSelect?: (v: any) => void;
-}
-
-const TypesDropDown: FC<Props> = (props: Props) => {
-  const { onSelect } = props;
-  const { typesDropdown, isLoading, count } = useTypedSelector(
-    (state) => state.types
+const VendorsDropDown: FC = () => {
+  const { vendorsDropDown, isLoading, count } = useTypedSelector(
+    (state) => state.vendors
   );
-  const { getTypeDropdown, removeTypeDropDown } = useActions();
+  const { getVendorDropdown, removeVendorDropDown } = useActions();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [page, setPage] = React.useState(1);
@@ -27,24 +21,16 @@ const TypesDropDown: FC<Props> = (props: Props) => {
   const pageCount = Math.ceil(count / pagination.pageSize);
 
   const onFocus = () => {
-    if (typesDropdown.length > 0) removeTypeDropDown([]);
+    if (vendorsDropDown.length > 0) removeVendorDropDown([]);
     setPage(1);
-    getTypeDropdown();
+    getVendorDropdown();
     if (!isLoading) {
       setIsOpen(true);
     }
   };
 
-  const choose = (val: any) => {
-    if (onSelect) {
-      onSelect(val);
-    }
-    setIsOpen(false);
-  };
-
   const onBlur = () => {
     setIsOpen(false);
-    // removeTypeDropDown([]);
   };
 
   const nextPage = (e: any) => {
@@ -55,7 +41,7 @@ const TypesDropDown: FC<Props> = (props: Props) => {
       page < pageCount
     ) {
       const nextPage = page + 1;
-      getTypeDropdown(nextPage, pagination.pageSize);
+      getVendorDropdown(nextPage, pagination.pageSize);
       setPage(nextPage);
     }
   };
@@ -63,7 +49,7 @@ const TypesDropDown: FC<Props> = (props: Props) => {
   const showMore = (menu: any) => (
     <>
       {menu}
-      <Divider style={{ margin: "4px 0" }} />
+      <Divider style={{ margin: "4px 0 " }} />
       <div style={{ padding: "8px", textAlign: "center" }}>
         <MoreOutlined rotate={90} />
       </div>
@@ -71,29 +57,32 @@ const TypesDropDown: FC<Props> = (props: Props) => {
   );
 
   return (
-    <div>
-      <Item name="typeId" style={{ width: "100%" }} rules={[rules.required()]}>
+    <>
+      <Item
+        name="vendorId"
+        style={{ width: "100%" }}
+        rules={[rules.required()]}
+      >
         <Select
           open={isOpen}
           onFocus={onFocus}
           onBlur={onBlur}
-          // onChange={() => setIsOpen(false)}
-          onSelect={(val) => choose(val)}
+          onChange={() => setIsOpen(false)}
           listHeight={150}
           loading={isLoading}
           onPopupScroll={nextPage}
           dropdownRender={page < pageCount ? showMore : undefined}
-          placeholder="Тип оборудования"
+          placeholder="Призводитель"
         >
-          {typesDropdown.map((el) => (
+          {vendorsDropDown.map((el) => (
             <Option key={el.id} value={el.id}>
               {el.name}
             </Option>
           ))}
         </Select>
       </Item>
-    </div>
+    </>
   );
 };
 
-export default React.memo(TypesDropDown);
+export default VendorsDropDown;

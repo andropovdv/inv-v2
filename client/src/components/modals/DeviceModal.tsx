@@ -1,109 +1,71 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import {
-  Modal,
-  Form,
-  Select,
-  Skeleton,
-  Input,
-  Button,
-  Space,
-  Typography,
-  Spin,
-  Row,
-  Col,
-} from "antd";
+import { Modal, Form, Select, Input, Typography, Row, Col } from "antd";
 import React, { FC } from "react";
 import { useActions } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { IDevice } from "../../models/IDevice";
+import { CurrentDevice, IDevice } from "../../models/IDevice";
 import { rules } from "../../utils/rules";
+import TypesDropDown from "../dropdown/TypesDropDown";
+import VendorsDropDown from "../dropdown/VendorsDropDown";
+import StaticScreenValue from "./StaticScreenValue";
 
 const { Text } = Typography;
+const { Item } = Form;
 
 interface DeviceProps {
   visibly: boolean;
   title: any;
+  current?: CurrentDevice;
+  mode: boolean;
   setVisibly: (v: boolean) => void;
   submit: (device: IDevice) => void;
 }
 
 const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
-  const { getValue } = useActions();
-  const { values, isLoading, valuesField } = useTypedSelector(
-    (state) => state.values
-  );
+  const { visibly, title, setVisibly, submit, current, mode } = props;
 
-  const { visibly, title, setVisibly, submit } = props;
+  const { getValue, setFieldValue } = useActions();
+  const { valuesField } = useTypedSelector((state) => state.values);
+
   const [form] = Form.useForm();
 
-  // start test array form
-  const [arrayField, setArrayField] = React.useState<any[]>([]);
-  const [val, setVal] = React.useState();
-
-  React.useEffect(() => {
-    // getValue();
-    // getType();
-    getVendor();
-  }, []);
+  const [val, setVal] = React.useState(0);
 
   React.useEffect(() => {
     getValue(undefined, undefined, val);
-    // createFieldsForm();
   }, [val]);
 
-  const createFieldsForm = () => {
-    console.log("end isLoading:", isLoading);
-    const map = valuesField.reduce((acc: any, cur: any) => {
-      acc[cur.typeInfoId] = acc[cur.typeInfoId] || {
-        id: cur.typeInfoId,
-        propOne: "",
-        propType: "",
-        val: [],
-      };
-      acc[cur.typeInfoId].propOne = cur.type_info.preferense;
-      acc[cur.typeInfoId].propType = cur.type_info.type_preferense;
-      acc[cur.typeInfoId].val.push(cur.value);
-      return acc;
-    }, {});
-    const result = Object.values(map);
-    console.log("Result: ", result);
-    setArrayField(result);
-    console.log("finish isLoading:", isLoading);
-  };
+  React.useEffect(() => {
+    form.resetFields();
+    if (mode) {
+      form.setFieldsValue(current);
+    } else {
+      form.setFieldsValue({ name: current?.name, value: current?.name });
+      getValue(undefined, undefined, current?.typeId);
+    }
+    // form.setFieldsValue(current);
+  }, [form, current]);
 
-  // let arrayField: any[] = [];
   const getPrefById = (val: any) => {
+    console.log("Val:", val);
     setVal(val);
   };
 
-  // end test array form
-
-  const { getType, getVendor } = useActions();
-
-  const { types, isLoading: isLoadingTypes } = useTypedSelector(
-    (state) => state.types
-  );
-  const { vendors, isLoading: isLoadingVendor } = useTypedSelector(
-    (state) => state.vendors
-  );
-
-  // get Types
-
   const exitBtn = () => {
     setVisibly(false);
+    form.resetFields();
+    // setFieldValue([]);
   };
 
   const submitBtn = () => {
     form.validateFields().then((values) => {
-      // submit(values);
-      console.log("values:", values);
+      submit(values);
       form.resetFields();
     });
   };
 
   return (
-    <div>
+    <>
       <Modal
         visible={visibly}
         title={title}
@@ -113,110 +75,119 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
         destroyOnClose={true}
       >
         <Form form={form} preserve={false}>
-          <Form.Item name="type" rules={[rules.required()]}>
-            {isLoadingTypes ? (
-              <Skeleton.Input
-                style={{ width: 472 }}
-                active={true}
-                size="small"
-              />
-            ) : (
-              <Select
-                placeholder="Тип оборудования"
-                onSelect={(val) => getPrefById(val)}
-                // onChange={(val) => getPrefById(val)}
-              >
-                {types.map((el) => (
-                  <Select.Option key={el.id} value={el.id ? el.id : ""}>
-                    {el.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            )}
-          </Form.Item>
-          <Form.Item name="vendor" rules={[rules.required()]}>
-            {isLoadingVendor ? (
-              <Skeleton.Input
-                style={{ width: 472 }}
-                active={true}
-                size="small"
-              />
-            ) : (
-              <Select placeholder="Производитель">
-                {vendors.map((el) => (
-                  <Select.Option key={el.id} value={el.id ? el.id : ""}>
-                    {el.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            )}
-          </Form.Item>
-          <Form.Item name="name" rules={[rules.required()]}>
-            <Input placeholder="Модель" />
-          </Form.Item>
-          {isLoading ? (
-            <Space size="large">
-              <Text type="secondary">Loading</Text>
-              <Spin size="large" />
-            </Space>
+          {mode ? (
+            <>
+              <TypesDropDown onSelect={getPrefById} />
+              <VendorsDropDown />
+            </>
           ) : (
             <>
-              {valuesField.map((el: any, index) => (
-                <Row key={el.id}>
-                  <Col span={6}>
-                    <Form.Item
-                      name={["info", index, "title"]}
-                      initialValue={el.propOne}
-                    >
-                      <Text>{`${el.propOne}:`}</Text>
-                      {/* <Input disabled bordered={false} /> */}
-                    </Form.Item>
-                  </Col>
-                  <Col span={18}>
-                    <Form.Item name={["info", index, "desc"]}>
-                      {el.propType === "STRING" ? (
-                        <Input />
-                      ) : (
-                        <Select placeholder="Choose">
-                          {el.val.map((e: any, index: any) => (
-                            <Select.Option key={index} value={e ? e : "not"}>
-                              {e}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                </Row>
-              ))}
+              <StaticScreenValue
+                nameItem="typeId"
+                title="Тип оборудования"
+                current={current?.nType}
+              />
+              <StaticScreenValue
+                nameItem="vendorId"
+                title="Производитель"
+                current={current?.nVendor}
+              />
             </>
           )}
-          {/* {arrayField.map((el, index) => (
-            <Space>
-              <Form.Item
-                name={["info", index, "title"]}
-                initialValue={el.propOne}
-              >
-                <Input disabled />
-              </Form.Item>
-              <Form.Item name={["info", index, "desc"]}>
-                {el.propType === "STRING" ? (
-                  <Input />
-                ) : (
-                  <div style={{ width: 175 }}>
-                    <Select placeholder="Choose">
-                      {el.val.map((el: any) => (
-                        <Select.Option value={el}>{el}</Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-                )}
-              </Form.Item>
-            </Space>
-          ))} */}
+
+          <Item name="name" rules={[rules.required()]}>
+            <Input placeholder="Модель" />
+          </Item>
+
+          <Item
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.typeId !== currentValues.typeId
+            }
+          >
+            {() => {
+              if (!mode) {
+                return current?.info.map((el, index) => (
+                  <Row key={index}>
+                    <Col span={6}>
+                      <Item
+                        name={["info", index, "title"]}
+                        initialValue={el.title}
+                      >
+                        <Text>{`${el.title}:`}</Text>
+                      </Item>
+                    </Col>
+                    <Col span={18}>
+                      {/* <pre style={{ color: "red" }}> */}
+                      <Item
+                        name={["info", index, "desc"]}
+                        initialValue={el.description}
+                      >
+                        {valuesField.find((e: any) => el.title === e.propOne)
+                          ?.propType === "STRING" ? (
+                          <Input
+                            suffix={
+                              valuesField.find(
+                                (e: any) => el.title === e.propOne
+                              )?.unit
+                            }
+                          />
+                        ) : (
+                          <Select>
+                            {valuesField
+                              .find((e: any) => el.title === e.propOne)
+                              ?.val?.map((z, idx) => (
+                                <Select.Option key={idx} value={z}>
+                                  {z}
+                                </Select.Option>
+                              ))}
+                          </Select>
+                        )}
+                      </Item>
+                      {/* </pre> */}
+                      {/* {el.description} */}
+                    </Col>
+                  </Row>
+                ));
+              }
+              return (
+                <>
+                  {valuesField.map((el: any, index: any) => (
+                    <Row key={el.id}>
+                      <Col span={6}>
+                        <Form.Item
+                          name={["info", index, "title"]}
+                          initialValue={el.propOne}
+                        >
+                          <Text>{`${el.propOne}:`}</Text>
+                        </Form.Item>
+                      </Col>
+                      <Col span={18}>
+                        <Form.Item name={["info", index, "desc"]}>
+                          {el.propType === "STRING" ? (
+                            <Input suffix={el.unit} />
+                          ) : (
+                            <Select placeholder="Choose">
+                              {el.val.map((e: any, index: any) => (
+                                <Select.Option
+                                  key={index}
+                                  value={e ? e : "not"}
+                                >
+                                  {e}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          )}
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  ))}
+                </>
+              );
+            }}
+          </Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 

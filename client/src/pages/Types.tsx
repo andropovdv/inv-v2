@@ -1,26 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC } from "react";
 import { v4 as uuid } from "uuid";
-import { Button, Modal, Typography } from "antd";
+import { Button, message, Modal, Typography } from "antd";
 import TableTypes from "../components/TableTypes";
 import TypeModal from "../components/modals/TypeModal";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { context } from "rc-image/lib/PreviewGroup";
 import { useActions } from "../hooks/useActions";
 import { IType } from "../models/IType";
 
 const { Title, Text } = Typography;
 const { confirm } = Modal;
 
+interface CurrentRow {
+  name: string;
+}
+
 const Types: FC = () => {
   const [visibly, setVisibly] = React.useState(false);
   const [isAdd, setIsAdd] = React.useState(true);
+  const [row, setRow] = React.useState({} as CurrentRow);
 
-  const { selected, types } = useTypedSelector((state) => state.types);
-  const { deleteType, addType, updateType, setSelectedTypes } = useActions();
+  const { selected, types, error } = useTypedSelector((state) => state.types);
+  const { deleteType, addType, updateType, setSelectedTypes, setError } =
+    useActions();
 
   const hasSelected = selected.length > 0;
   const hasEditSelected = selected.length > 0 && selected.length <= 1;
+
+  React.useEffect(() => {
+    if (error.length > 0) {
+      message.error(error, () => setError(""));
+    }
+  }, [error]);
 
   let deleteRow: any = [];
   let item: any = [];
@@ -45,7 +57,8 @@ const Types: FC = () => {
     setIsAdd(true);
     setVisibly(true);
   };
-  const updateBtn = () => {
+  const updateBtn = (val: IType) => {
+    setRow(val);
     setIsAdd(false);
     setVisibly(true);
   };
@@ -82,6 +95,8 @@ const Types: FC = () => {
     });
   };
 
+  console.log("Types render");
+
   return (
     <div>
       <Title level={4} type="secondary">
@@ -90,14 +105,6 @@ const Types: FC = () => {
       <div style={{ marginBottom: 16 }}>
         <Button className="m16button" type="primary" onClick={createBtn}>
           Create
-        </Button>
-        <Button
-          disabled={!hasEditSelected}
-          className="m16button"
-          type="primary"
-          onClick={updateBtn}
-        >
-          Update
         </Button>
         <Button danger disabled={!hasSelected} onClick={showDeleteModal}>
           {hasSelected ? `Delete (${selected.length})` : "Delete"}
@@ -115,7 +122,7 @@ const Types: FC = () => {
         visibly={visibly}
         setVisibly={setVisibly}
         submit={isAdd ? typeCreate : typeUpdate}
-        current={editRow}
+        current={row}
       />
     </div>
   );

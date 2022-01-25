@@ -1,5 +1,5 @@
 import { DeviceService } from "../../../api/DeviceService";
-import { IODevice } from "../../../models/IDevice";
+import { IDevice, IODevice } from "../../../models/IDevice";
 import { AppDispatch } from "./../../index";
 import {
   DeviceActionEnum,
@@ -77,5 +77,21 @@ export const DeviceActionCreator = {
     }
   },
 
-  updateDevice: () => async (dispatch: AppDispatch) => {},
+  updateDevice:
+    (id: number, name: string, info: any) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(DeviceActionCreator.setIsLoadingDevice(true));
+        const { data } = await DeviceService.updateDevice(id, name, info);
+        if (data) {
+          await dispatch<any>(DeviceActionCreator.getDevice(1));
+          dispatch(DeviceActionCreator.setSelectedDevice([]));
+        } else {
+          dispatch(DeviceActionCreator.setErrorDevice("Операция не удалась"));
+        }
+      } catch (e) {
+        dispatch(DeviceActionCreator.setErrorDevice((e as Error).message));
+      } finally {
+        dispatch(DeviceActionCreator.setIsLoadingDevice(false));
+      }
+    },
 };

@@ -24,6 +24,7 @@ export const TypeInfo = sequelize.define("type_info", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   preferense: { type: DataTypes.STRING, allowNull: false },
   type_preferense: { type: DataTypes.STRING, allowNull: false },
+  unit: { type: DataTypes.STRING },
 });
 
 export const Device = sequelize.define("device", {
@@ -39,7 +40,7 @@ export const DeviceInfo = sequelize.define("device_info", {
 
 export const TableValue = sequelize.define("table_value", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  value: { type: DataTypes.STRING, unique: true },
+  value: { type: DataTypes.STRING },
 });
 
 TypeInfo.hasMany(TableValue, { as: "TypeInfo" });

@@ -8,7 +8,13 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { pagination } from "../utils/consts";
 
-const TableDevices: FC = () => {
+interface DeviceProp {
+  editBtn: (v: any) => void;
+  delBtn: (v: any) => void;
+}
+
+const TableDevices: FC<DeviceProp> = (props: DeviceProp) => {
+  const { editBtn, delBtn } = props;
   const { getDevice, getType, setSelectedDevice } = useActions();
   const { devices, isLoading, count } = useTypedSelector(
     (state) => state.devices
@@ -38,6 +44,12 @@ const TableDevices: FC = () => {
     nVendor: el.vendor.name,
   }));
 
+  // tempory
+
+  const editTableBtn = (record: any) => {
+    editBtn(record);
+  };
+
   const column: ColumnsType<IDevice> = [
     { title: "Vendor", dataIndex: "nVendor", width: "15%" },
     { title: "Type", dataIndex: "nType", width: "15%" },
@@ -45,12 +57,14 @@ const TableDevices: FC = () => {
     {
       title: "Action",
       dataIndex: "operation",
-      render: () => (
+      render: (_: any, record: any) => (
         <Space size="middle">
-          <Button type="link" disabled={selectedRowKeys.length === 0}>
+          <Button type="link" onClick={() => editTableBtn(record)}>
             Edit
           </Button>
-          <Button type="link">Delete</Button>
+          <Button type="link" onClick={() => delBtn(record)}>
+            Delete
+          </Button>
         </Space>
       ),
       align: "center",
@@ -80,16 +94,14 @@ const TableDevices: FC = () => {
     ];
     const data: any = [];
     val.info.map((el: any) => data.push({ ...el, key: uuid() }));
-    console.log(data);
     return (
-      <div style={{ color: "grey" }}>
-        <Table
-          columns={column}
-          dataSource={data}
-          pagination={false}
-          size="small"
-        />
-      </div>
+      <Table
+        columns={column}
+        dataSource={data}
+        pagination={false}
+        size="small"
+        style={{ marginLeft: "32px" }}
+      />
     );
   };
 
@@ -100,7 +112,7 @@ const TableDevices: FC = () => {
         dataSource={res}
         size="small"
         loading={isLoading}
-        rowSelection={rowSelected}
+        rowSelection={{ ...rowSelected, hideSelectAll: true }}
         pagination={paginationOptions}
         expandable={{
           expandedRowRender: recordInfo,

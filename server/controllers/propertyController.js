@@ -18,7 +18,7 @@ const propertyController = {
   },
   async addProperty(req, res, next) {
     try {
-      const { name, type } = req.body;
+      const { name, type, unit } = req.body;
       if (!name && !type_preferense) {
         return next(new createError(400, "Incorect date"));
       }
@@ -31,6 +31,7 @@ const propertyController = {
       const result = await TypeInfo.create({
         preferense: name,
         type_preferense: type,
+        unit: unit,
       });
       return res.json(result);
     } catch (e) {
@@ -38,10 +39,10 @@ const propertyController = {
     }
   },
   async updateProperty(req, res, next) {
-    const { id, preferense, type_preferense } = req.body;
+    const { id, preferense, type_preferense, unit } = req.body;
     try {
       const result = await TypeInfo.update(
-        { preferense, type_preferense },
+        { preferense, type_preferense, unit },
         { where: { id } }
       );
       return res.json(result);

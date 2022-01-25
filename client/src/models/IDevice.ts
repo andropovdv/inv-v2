@@ -16,6 +16,15 @@ export interface IODevice {
   count: number;
 }
 
+export interface CurrentDevice {
+  typeId: number;
+  vendorId: number;
+  name: string;
+  info: any[];
+  nType?: string;
+  nVendor?: string;
+}
+
 type typeName = {
   name: string;
 };

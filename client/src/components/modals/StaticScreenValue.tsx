@@ -7,7 +7,7 @@ const { Text } = Typography;
 interface ScreenValue {
   nameItem: string;
   title: string;
-  current?: any;
+  current: any;
 }
 
 const StaticScreenValue: FC<ScreenValue> = (props: ScreenValue) => {
@@ -19,7 +19,7 @@ const StaticScreenValue: FC<ScreenValue> = (props: ScreenValue) => {
           <Col span={8}>
             <Text type="secondary" italic>{`${title}: `}</Text>
           </Col>
-          <Col span={8}>
+          <Col span={16}>
             <Text keyboard>{current}</Text>
           </Col>
         </Row>

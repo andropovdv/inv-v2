@@ -68,6 +68,18 @@ const PropertyModal: FC<PropertyProps> = (props: PropertyProps) => {
               ))}
             </Select>
           </Form.Item>
+          <Form.Item shouldUpdate>
+            {() => {
+              if (form.getFieldValue("type_preferense") === "STRING") {
+                return (
+                  <Form.Item name="unit">
+                    <Input />
+                  </Form.Item>
+                );
+              }
+              return undefined;
+            }}
+          </Form.Item>
         </Form>
       </Modal>
     </div>

@@ -8,7 +8,7 @@ import { IProperty } from "../models/IProperty";
 import { pagination } from "../utils/consts";
 
 interface PropertyProps {
-  editBtn: () => void;
+  editBtn: (v: any) => void;
 }
 
 const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
@@ -27,13 +27,14 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
     setSelectedProperty(selectedRowKeys);
   };
 
-  const buttonEdit = (value: string) => {
-    const item = propertis.filter((el) => el.preferense === value);
-    if (item[0].id) {
-      setSetSelectedRowKeys([item[0].id]);
-      setSelectedProperty([item[0].id]);
-      editBtn();
-    }
+  const buttonEdit = (row: any) => {
+    // const item = propertis.filter((el) => el.preferense === value);
+    // if (item[0].id) {
+    //   setSetSelectedRowKeys([item[0].id]);
+    //   setSelectedProperty([item[0].id]);
+    //   editBtn();
+    // }
+    editBtn(row.key);
   };
 
   const rowSelected = {
@@ -56,15 +57,24 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
     {
       title: "Property",
       dataIndex: "preferense",
-      render: (text) => (
-        <Button type="link" onClick={() => buttonEdit(text)}>
-          {text}
-        </Button>
-      ),
     },
     {
       title: "Type",
       dataIndex: "type_preferense",
+    },
+    {
+      title: "Unit",
+      dataIndex: "unit",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      width: "15%",
+      render: (_: any, record: any) => (
+        <Button type="link" onClick={() => buttonEdit(record)}>
+          Edit property
+        </Button>
+      ),
     },
   ];
 
@@ -76,7 +86,7 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
         columns={column}
         dataSource={tableData}
         size="small"
-        rowSelection={rowSelected}
+        rowSelection={{ ...rowSelected, hideSelectAll: true }}
         pagination={paginationOptions}
       />
     </div>

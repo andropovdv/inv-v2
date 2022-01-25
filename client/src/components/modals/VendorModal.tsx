@@ -1,6 +1,7 @@
 import { Form, Input, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { FC } from "react";
+import { useActions } from "../../hooks/useActions";
 import { IVendor } from "../../models/IVendor";
 import { rules } from "../../utils/rules";
 
@@ -18,6 +19,8 @@ interface CurrentRow {
 
 const VendorModal: FC<VendorProps> = (props: VendorProps) => {
   const { current, title, visibly, setVisibly, submit } = props;
+
+  const { setSelectedVendor } = useActions();
   const [form] = useForm();
 
   React.useEffect(() => {
@@ -27,6 +30,7 @@ const VendorModal: FC<VendorProps> = (props: VendorProps) => {
 
   const exitButton = () => {
     form.resetFields();
+    setSelectedVendor([]);
     setVisibly(false);
   };
 
@@ -35,6 +39,7 @@ const VendorModal: FC<VendorProps> = (props: VendorProps) => {
       .validateFields()
       .then((values) => {
         submit(values);
+        setSelectedVendor([]);
         form.resetFields();
       })
       .catch((info) => {

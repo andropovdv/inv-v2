@@ -54,9 +54,7 @@ const deviceController = {
       }
       const uni = await Device.findOne({ where: { name } });
       if (uni) {
-        return next(
-          new createError(400, `Производитель ${name} уже присутствует`)
-        );
+        return next(new createError(400, `Модель ${name} уже присутствует`));
       }
       const result = await Device.create({ name, vendorId, typeId });
       if (info) {
@@ -75,7 +73,26 @@ const deviceController = {
       return next(new createError(500, `Что-то пошло не так ${e.message}`));
     }
   },
-  async updateDevices(req, res, next) {},
+  async updateDevices(req, res, next) {
+    try {
+      const { id, name, info } = req.body;
+      if (info) {
+        let infoApi = JSON.parse(info);
+        console.log(infoApi);
+        infoApi.forEach(async (el) => {
+          await DeviceInfo.update(
+            { description: el.desc },
+            {
+              where: { deviceId: id, title: el.title },
+            }
+          );
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      return next(new createError(500, `Что-то пошло не так ${e.message}`));
+    }
+  },
   async deleteDevices(req, res, next) {
     const { id } = req.body;
     try {

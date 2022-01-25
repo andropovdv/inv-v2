@@ -23,7 +23,6 @@ const typeController = {
   async addTypes(req, res, next) {
     try {
       let { name, pref } = req.body;
-      console.log(req.body);
       if (!name) {
         return next(new createError(400, "Incorect date"));
       }
@@ -50,9 +49,12 @@ const typeController = {
     }
   },
   async updateTypes(req, res, next) {
-    const { id, type } = req.body;
+    const { id, name } = req.body;
     try {
-      const result = await Type.update({ type }, { where: { id } });
+      if (!name && !id) {
+        return next(new createError(400, "Incorect date"));
+      }
+      const result = await Type.update({ name }, { where: { id } });
       return res.json(result);
     } catch (e) {
       return next(new createError(500, `Что-то пошло не так ${e.message}`));
@@ -61,13 +63,12 @@ const typeController = {
   async deleteTypes(req, res, next) {
     const { id } = req.body;
     try {
-      const deleteLink = await TypeInfo.destroy({
-        where: { typeId: { id: id[0] } },
-      });
       const result = await Type.destroy({ where: { id: { [Op.in]: id } } });
       return res.json({ result });
     } catch (e) {
-      return next(new createError(500, `Что-то пошло не так ${e.message}`));
+      return next(
+        new createError(500, `DELETE: что-то пошло не так ${e.message}`)
+      );
     }
   },
 };

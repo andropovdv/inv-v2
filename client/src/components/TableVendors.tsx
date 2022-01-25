@@ -75,7 +75,7 @@ const TableVendors: FC<VendorProps> = (props: VendorProps) => {
         dataSource={tableData}
         size="small"
         loading={isLoading}
-        rowSelection={rowSelected}
+        rowSelection={{ ...rowSelected, hideSelectAll: true }}
         pagination={paginationOptions}
       />
     </>

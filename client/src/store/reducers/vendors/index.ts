@@ -3,6 +3,7 @@ import { VendorState, VendorsAction, VendorActionEnum } from "./types";
 
 const initialState: VendorState = {
   vendors: [] as IVendor[],
+  vendorsDropDown: [] as IVendor[],
   isLoading: false,
   error: "",
   selected: [],
@@ -16,6 +17,15 @@ const vendorReducer = (
   switch (action.type) {
     case VendorActionEnum.SET_VENDORS: {
       return { ...state, vendors: action.payload };
+    }
+    case VendorActionEnum.SET_VENDORS_DROPDOWN: {
+      return {
+        ...state,
+        vendorsDropDown: [...state.vendorsDropDown, ...action.payload],
+      };
+    }
+    case VendorActionEnum.REMOVE_VENDORS_DROPDOWN: {
+      return { ...state, vendorsDropDown: action.payload };
     }
     case VendorActionEnum.SET_VENDORS_IS_LOADING: {
       return { ...state, isLoading: action.payload };

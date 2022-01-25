@@ -19,7 +19,7 @@ export const ValueActionCreator = {
     type: ValuesActionEnum.SET_VALUES_COUNT,
     payload: count.count,
   }),
-  setFieldValue: (field: IValue) => ({
+  setFieldValue: (field: any) => ({
     type: ValuesActionEnum.SET_VALUES_FIELDS,
     payload: field,
   }),
@@ -41,6 +41,7 @@ export const ValueActionCreator = {
       try {
         dispatch(ValueActionCreator.setIsLoadingValue(true));
         const { data } = await ValuesService.getValue(page, limit, typeId);
+
         if (data) {
           if (typeId) {
             const map: any = data.rows.reduce((acc: any, cur: any) => {
@@ -49,6 +50,7 @@ export const ValueActionCreator = {
                 propOne: "",
                 propType: "",
                 val: [],
+                unit: cur.type_info.unit,
               };
               acc[cur.typeInfoId].propOne = cur.type_info.preferense;
               acc[cur.typeInfoId].propType = cur.type_info.type_preferense;

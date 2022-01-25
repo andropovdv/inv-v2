@@ -72,10 +72,11 @@ export const PropertyActionCreator = {
       }
     },
   addProperty:
-    (name: string, type: string) => async (dispatch: AppDispatch) => {
+    (name: string, type: string, unit?: string) =>
+    async (dispatch: AppDispatch) => {
       try {
         dispatch(PropertyActionCreator.setIsLoadingProperty(true));
-        await PropertyService.addProperty(name, type);
+        await PropertyService.addProperty(name, type, unit);
         await dispatch<any>(PropertyActionCreator.getProperty(1));
       } catch (e) {
         dispatch(PropertyActionCreator.setErrorProperty((e as Error).message));

@@ -41,17 +41,33 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
   // TODO имеет смысл вынести в отдельный компонент ?
   const recordInfo = (val: IValue) => {
     const column = [
-      { title: "Хар-ка", dataIndex: "preferense", key: val.id, width: "15%" },
-      { title: "Тип хар-ки", dataIndex: "type_preferense", key: val.id },
-      { title: "Значение", dataIndex: "value", key: val.id },
+      {
+        title: "Хар-ка",
+        dataIndex: "preferense",
+        key: "preferense",
+        width: "15%",
+      },
+      {
+        title: "Тип хар-ки",
+        dataIndex: "type_preferense",
+        key: "type_preferense",
+      },
+      { title: "Значение", dataIndex: "value", key: "value" },
       {
         title: "Action",
         dataIndex: "action",
-        render: (_: any, record: any) => (
-          <Button type="link" onClick={() => btnEdit(record)}>
-            Edit feature
-          </Button>
-        ),
+        key: "sub_action",
+        render: (_: any, record: any) => {
+          if (record.type_preferense === "STRING") {
+            return undefined;
+          } else {
+            return (
+              <Button type="link" onClick={() => btnEdit(record)}>
+                Edit feature
+              </Button>
+            );
+          }
+        },
       },
     ];
     const data: any = [];
@@ -86,11 +102,13 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
     {
       title: "Type(Тип оборудования)",
       dataIndex: "name",
-      width: "15%",
+      width: "20%",
+      key: "name,",
     },
     {
       title: "Action",
       dataIndex: "operation",
+      key: "action",
       render: (_, record: any) => (
         <Space size="middle">
           <Button
@@ -121,6 +139,7 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
       <Table<IValue>
         columns={column}
         dataSource={tableData}
+        rowKey={(record) => record.id}
         size="small"
         expandable={{
           expandedRowRender: recordInfo,

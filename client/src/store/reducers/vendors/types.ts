@@ -2,6 +2,7 @@ import { IVendor } from "../../../models/IVendor";
 
 export interface VendorState {
   vendors: IVendor[];
+  vendorsDropDown: IVendor[];
   isLoading: boolean;
   error: string;
   selected: number[];
@@ -14,10 +15,22 @@ export enum VendorActionEnum {
   SET_VENDORS_ERROR = "SET_VENDORS_ERROR",
   SET_VENDORS_SELECTED = "SET_VENDORS_SELECTED",
   SET_VENDORS_COUNT = "SET_VENDORS_COUNT",
+  SET_VENDORS_DROPDOWN = "SET_VENDORS_DROPDOWN",
+  REMOVE_VENDORS_DROPDOWN = "REMOVE_VENDORS_DROPDOWN",
 }
 
 export interface SetVendorsAction {
   type: VendorActionEnum.SET_VENDORS;
+  payload: IVendor[];
+}
+
+export interface SetVendorsDropDownAction {
+  type: VendorActionEnum.SET_VENDORS_DROPDOWN;
+  payload: IVendor[];
+}
+
+export interface RemoveVendorsDropDownAction {
+  type: VendorActionEnum.REMOVE_VENDORS_DROPDOWN;
   payload: IVendor[];
 }
 
@@ -46,4 +59,6 @@ export type VendorsAction =
   | SetErrorAction
   | SetIsLoadingAction
   | SetSelectedVendors
-  | SetCountAction;
+  | SetCountAction
+  | SetVendorsDropDownAction
+  | RemoveVendorsDropDownAction;
