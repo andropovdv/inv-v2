@@ -10,7 +10,9 @@ import {
   SetPropertySelectedAction,
   SetPropertyDropDownAction,
   RemovePropertyDropDown,
+  SetPropertyCurrentPageAction,
 } from "./types";
+import { pagination } from "../../../utils/consts";
 
 export const PropertyActionCreator = {
   setProperty: (propertis: IOProperty): SetPropertyAction => ({
@@ -39,6 +41,10 @@ export const PropertyActionCreator = {
   }),
   setSelectedProperty: (payload: number[]): SetPropertySelectedAction => ({
     type: PropertyActionEnum.SET_PROPERTIES_SELECTED,
+    payload: payload,
+  }),
+  setCurrentPageProperty: (payload: number): SetPropertyCurrentPageAction => ({
+    type: PropertyActionEnum.SET_PROPERTIES_CURRENT_PAGE,
     payload: payload,
   }),
   getProperty:
@@ -77,7 +83,7 @@ export const PropertyActionCreator = {
       try {
         dispatch(PropertyActionCreator.setIsLoadingProperty(true));
         await PropertyService.addProperty(name, type, unit);
-        await dispatch<any>(PropertyActionCreator.getProperty(1));
+        await dispatch<any>(PropertyActionCreator.getProperty());
       } catch (e) {
         dispatch(PropertyActionCreator.setErrorProperty((e as Error).message));
       } finally {
@@ -91,7 +97,7 @@ export const PropertyActionCreator = {
       const { data } = await PropertyService.deleteProperty(payload);
       if (data) {
         dispatch(PropertyActionCreator.setSelectedProperty([]));
-        await dispatch<any>(PropertyActionCreator.getProperty(1));
+        await dispatch<any>(PropertyActionCreator.getProperty());
       } else {
         dispatch(PropertyActionCreator.setErrorProperty("Операция не удалась"));
       }
@@ -106,7 +112,7 @@ export const PropertyActionCreator = {
       dispatch(PropertyActionCreator.setIsLoadingProperty(true));
       const { data } = await PropertyService.updateProperty(property);
       if (data) {
-        await dispatch<any>(PropertyActionCreator.getProperty(1));
+        await dispatch<any>(PropertyActionCreator.getProperty());
         dispatch(PropertyActionCreator.setSelectedProperty([]));
       }
     } catch (e) {

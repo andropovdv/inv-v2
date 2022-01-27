@@ -16,11 +16,18 @@ const Vendors: FC = () => {
   const { vendors, error, count, selected } = useTypedSelector(
     (state) => state.vendors
   );
-  const { setError, addVendor, updateVendor, setSelectedVendor, deleteVendor } =
-    useActions();
+  const {
+    setError,
+    addVendor,
+    updateVendor,
+    setSelectedVendor,
+    deleteVendor,
+    setCurrentPageVendor,
+  } = useActions();
 
   const [visibly, setVisibly] = React.useState(false);
   const [isAdd, setIsAdd] = React.useState(true);
+  const [row, setRow] = React.useState({} as IVendor);
 
   const hasSelected = selected.length > 0;
   const hasEditSelected = selected.length > 0 && selected.length <= 1;
@@ -55,17 +62,24 @@ const Vendors: FC = () => {
     setVisibly(true);
   };
 
-  const updateBtn = () => {
+  const updateBtn = (row: number) => {
+    const elem: any = vendors.find((el: IVendor) => el.id === row);
+    console.log("elem", elem);
+    if (elem) {
+      setRow(elem);
+    }
     setIsAdd(false);
     setVisibly(true);
   };
 
   const createVen = (value: IVendor) => {
+    setCurrentPageVendor(1);
     addVendor(value.name);
     setVisibly(false);
   };
   const updateVen = (value: IVendor) => {
     const payload = { ...value, id: editRow.id };
+    setCurrentPageVendor(1);
     updateVendor(payload);
     setSelectedVendor([]);
     setVisibly(false);
@@ -84,6 +98,7 @@ const Vendors: FC = () => {
       okType: "danger",
       onOk() {
         setSelectedVendor([]);
+        setCurrentPageVendor(1);
         deleteVendor(selected);
       },
       onCancel() {
@@ -92,20 +107,26 @@ const Vendors: FC = () => {
     });
   };
 
+  const delFromTable = (rec: any) => {
+    confirm({
+      title: <Text type="secondary">Do you really want to delete</Text>,
+      icon: <ExclamationCircleOutlined />,
+      content: <b>{`${rec.name}`}</b>,
+      okText: "Yes",
+      okType: "danger",
+      onOk() {
+        setCurrentPageVendor(1);
+        deleteVendor([rec.id]);
+      },
+    });
+  };
+
   return (
     <div>
-      <Title level={4} type="secondary">{`Vendors ${count}`}</Title>
+      <Title level={4} type="secondary">{`Производители ${count}`}</Title>
       <div style={{ marginBottom: 16 }}>
         <Button className="m16button" type="primary" onClick={createBtn}>
           Create
-        </Button>
-        <Button
-          disabled={!hasEditSelected}
-          type="primary"
-          className="m16button"
-          onClick={updateBtn}
-        >
-          Update
         </Button>
         <Button danger disabled={!hasSelected} onClick={showDeleteModal}>
           {hasSelected ? `Delete (${selected.length})` : "Delete"}
@@ -122,9 +143,9 @@ const Vendors: FC = () => {
         visibly={visibly}
         setVisibly={setVisibly}
         submit={isAdd ? createVen : updateVen}
-        current={editRow}
+        current={row}
       />
-      <TableVendors editBtn={updateBtn} />
+      <TableVendors editBtn={updateBtn} delBtn={delFromTable} />
     </div>
   );
 };

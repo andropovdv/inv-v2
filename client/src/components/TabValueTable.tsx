@@ -123,11 +123,17 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
     },
   ];
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  console.log("Current Page:", currentPage);
   const changePage = (page: number) => {
+    setCurrentPage(page);
     getValue(page, pagination.pageSize);
   };
 
   let paginationOption = {
+    defaultCurrent: 1,
+    // current: currentPage,
     total: count,
     pageSize: pagination.pageSize,
     onChange: (page: number) => changePage(page),

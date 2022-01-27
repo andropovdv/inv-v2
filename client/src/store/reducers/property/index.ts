@@ -8,6 +8,7 @@ const initialState: PropertyState = {
   error: "",
   selected: [],
   count: 0,
+  currentPage: 1,
 };
 
 const propertyReducer = (
@@ -38,6 +39,9 @@ const propertyReducer = (
     }
     case PropertyActionEnum.SET_PROPERTIES_COUNT: {
       return { ...state, count: action.payload };
+    }
+    case PropertyActionEnum.SET_PROPERTIES_CURRENT_PAGE: {
+      return { ...state, currentPage: action.payload };
     }
     default:
       return state;

@@ -33,7 +33,8 @@ const propertyController = {
         type_preferense: type,
         unit: unit,
       });
-      return res.json(result);
+      const count = await TypeInfo.count();
+      return res.json(count);
     } catch (e) {
       return next(new createError(500, `Что-то пошло не так ${e.message}`));
     }

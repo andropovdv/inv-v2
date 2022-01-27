@@ -13,8 +13,11 @@ interface PropertyProps {
 
 const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
   const { editBtn } = props;
-  const { getProperty, setSelectedProperty } = useActions();
-  const { propertis, count } = useTypedSelector((state) => state.propertis);
+  const { getProperty, setSelectedProperty, setCurrentPageProperty } =
+    useActions();
+  const { propertis, count, currentPage } = useTypedSelector(
+    (state) => state.propertis
+  );
 
   React.useEffect(() => {
     getProperty();
@@ -28,12 +31,6 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
   };
 
   const buttonEdit = (row: any) => {
-    // const item = propertis.filter((el) => el.preferense === value);
-    // if (item[0].id) {
-    //   setSetSelectedRowKeys([item[0].id]);
-    //   setSelectedProperty([item[0].id]);
-    //   editBtn();
-    // }
     editBtn(row.key);
   };
 
@@ -43,10 +40,12 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
   };
 
   const changePage = (page: number) => {
+    setCurrentPageProperty(page);
     getProperty(page, pagination.pageSize);
   };
 
   let paginationOptions = {
+    current: currentPage,
     total: count,
     pageSize: pagination.pageSize,
     onChange: (page: number) => changePage(page),

@@ -7,6 +7,7 @@ export interface VendorState {
   error: string;
   selected: number[];
   count: number;
+  currentPage: number;
 }
 
 export enum VendorActionEnum {
@@ -17,6 +18,7 @@ export enum VendorActionEnum {
   SET_VENDORS_COUNT = "SET_VENDORS_COUNT",
   SET_VENDORS_DROPDOWN = "SET_VENDORS_DROPDOWN",
   REMOVE_VENDORS_DROPDOWN = "REMOVE_VENDORS_DROPDOWN",
+  SET_VENDORS_CURRENT_PAGE = "SET_VENDORS_CURRENT_PAGE",
 }
 
 export interface SetVendorsAction {
@@ -54,6 +56,11 @@ export interface SetSelectedVendors {
   payload: number[];
 }
 
+export interface SetCurentPageVendors {
+  type: VendorActionEnum.SET_VENDORS_CURRENT_PAGE;
+  payload: number;
+}
+
 export type VendorsAction =
   | SetVendorsAction
   | SetErrorAction
@@ -61,4 +68,5 @@ export type VendorsAction =
   | SetSelectedVendors
   | SetCountAction
   | SetVendorsDropDownAction
-  | RemoveVendorsDropDownAction;
+  | RemoveVendorsDropDownAction
+  | SetCurentPageVendors;

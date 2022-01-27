@@ -9,6 +9,7 @@ import {
   SetCountAction,
   SetVendorsDropDownAction,
   RemoveVendorsDropDownAction,
+  SetCurentPageVendors,
 } from "./types";
 import { IVendor } from "../../../models/IVendor";
 import { VendorService } from "../../../api/VendorService";
@@ -40,6 +41,10 @@ export const VendorActionCreator = {
   }),
   setSelectedVendor: (payload: number[]): SetSelectedVendors => ({
     type: VendorActionEnum.SET_VENDORS_SELECTED,
+    payload: payload,
+  }),
+  setCurrentPageVendor: (payload: number): SetCurentPageVendors => ({
+    type: VendorActionEnum.SET_VENDORS_CURRENT_PAGE,
     payload: payload,
   }),
   getVendor:

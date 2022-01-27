@@ -8,6 +8,7 @@ const initialState: VendorState = {
   error: "",
   selected: [],
   count: 0,
+  currentPage: 1,
 };
 
 const vendorReducer = (
@@ -38,6 +39,9 @@ const vendorReducer = (
     }
     case VendorActionEnum.SET_VENDORS_COUNT: {
       return { ...state, count: action.payload };
+    }
+    case VendorActionEnum.SET_VENDORS_CURRENT_PAGE: {
+      return { ...state, currentPage: action.payload };
     }
     default:
       return state;

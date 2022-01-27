@@ -73,8 +73,9 @@ export const ValueActionCreator = {
   addValue: (payload: IValue) => async (dispatch: AppDispatch) => {
     try {
       dispatch(ValueActionCreator.setIsLoadingValue(true));
-      await ValuesService.addValue(payload);
-      await dispatch<any>(ValueActionCreator.getValue(1));
+      const result = await ValuesService.addValue(payload);
+      await dispatch<any>(ValueActionCreator.getValue());
+      console.log(result);
     } catch (e) {
       dispatch(ValueActionCreator.setErrorValue((e as Error).message));
     } finally {

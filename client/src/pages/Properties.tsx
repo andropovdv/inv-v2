@@ -22,6 +22,7 @@ const Properties: FC = () => {
     deleteProperty,
     updateProperty,
     setSelectedProperty,
+    setCurrentPageProperty,
   } = useActions();
 
   const [visibly, setVisibly] = React.useState(false);
@@ -35,10 +36,7 @@ const Properties: FC = () => {
   }, [error]);
 
   const hasSelected = selected.length > 0;
-  // const hasEditSelected = selected.length > 0 && selected.length <= 1;
 
-  // let item: any = [];
-  let editRow: any = [];
   let deleteRow: any = [];
 
   if (hasSelected) {
@@ -47,14 +45,6 @@ const Properties: FC = () => {
       deleteRow.push(elem.preferense);
     });
   }
-
-  // if (hasEditSelected) {
-  //   selected.forEach((e) => {
-  //     const elem: any = propertis.find((el) => el.id === e);
-  //     item.push(elem.name);
-  //   });
-  //   editRow = propertis.filter((el) => el.id === selected[0])[0];
-  // }
 
   const showDeleteModal = () => {
     confirm({
@@ -68,6 +58,7 @@ const Properties: FC = () => {
       okText: "Yes",
       okType: "danger",
       onOk() {
+        setCurrentPageProperty(1);
         deleteProperty(selected);
       },
       onCancel() {
@@ -80,6 +71,7 @@ const Properties: FC = () => {
     setIsAdd(true);
     setVisibly(true);
   };
+
   const updateBtn = (row: number) => {
     const elem: any = propertis.find((el: IProperty) => el.id === row);
     console.log("elem:", elem);
@@ -91,11 +83,14 @@ const Properties: FC = () => {
   };
 
   const createProp = (value: IProperty) => {
+    setCurrentPageProperty(1);
     addProperty(value.preferense, value.type_preferense);
     setVisibly(false);
   };
+
   const updateProp = (value: IProperty) => {
     const payload = { ...value, id: row.id };
+    setCurrentPageProperty(1);
     updateProperty(payload);
     setSelectedProperty([]);
     setVisibly(false);
@@ -110,9 +105,6 @@ const Properties: FC = () => {
         <Button type="primary" onClick={createBtn}>
           Create
         </Button>
-        {/* <Button type="primary" disabled={!hasEditSelected} onClick={updateBtn}>
-          Update
-        </Button> */}
         <Button danger disabled={!hasSelected} onClick={showDeleteModal}>
           {hasSelected ? `Remove (${selected.length})` : "Remove"}
         </Button>
@@ -123,7 +115,7 @@ const Properties: FC = () => {
           isAdd ? (
             <Text type="secondary">Create property</Text>
           ) : (
-            <Text type="secondary">Create property</Text>
+            <Text type="secondary">Update property</Text>
           )
         }
         visibly={visibly}

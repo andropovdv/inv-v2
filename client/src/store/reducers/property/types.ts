@@ -7,6 +7,7 @@ export interface PropertyState {
   error: string;
   selected: number[];
   count: number;
+  currentPage: number;
 }
 
 export enum PropertyActionEnum {
@@ -17,6 +18,7 @@ export enum PropertyActionEnum {
   SET_PROPERTIES_COUNT = "SET_PROPERTIES_COUNT",
   SET_PROPERTIES_DROPDOWN = "SET_PROPERTIES_DROPDOWN",
   REMOVE_PROPERTIES_DROPDOWN = "REMOVE_PROPERTIES_DROPDOWN",
+  SET_PROPERTIES_CURRENT_PAGE = "SET_PROPERTIES_CURRENT_PAGE",
 }
 
 export interface SetPropertyAction {
@@ -54,6 +56,11 @@ export interface SetPropertySelectedAction {
   payload: number[];
 }
 
+export interface SetPropertyCurrentPageAction {
+  type: PropertyActionEnum.SET_PROPERTIES_CURRENT_PAGE;
+  payload: number;
+}
+
 export type PropertyAction =
   | SetPropertyAction
   | SetPropertyCountAction
@@ -61,4 +68,5 @@ export type PropertyAction =
   | SetPropertyIsLoadingAction
   | SetPropertySelectedAction
   | SetPropertyDropDownAction
-  | RemovePropertyDropDown;
+  | RemovePropertyDropDown
+  | SetPropertyCurrentPageAction;
