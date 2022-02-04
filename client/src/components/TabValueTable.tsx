@@ -11,12 +11,15 @@ import { pagination } from "../utils/consts";
 interface ValueProps {
   editBtn: (r: IValue[]) => void;
   createBtn: (r: any[]) => void;
+  delBtn: (d: any) => void;
 }
 
 const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
-  const { editBtn, createBtn } = props;
-  const { getValue, setSelectedValue } = useActions();
-  const { values, selected, count } = useTypedSelector((state) => state.values);
+  const { editBtn, createBtn, delBtn } = props;
+  const { getValue, setSelectedValue, setCurrentPageValue } = useActions();
+  const { values, selected, count, currentPage } = useTypedSelector(
+    (state) => state.values
+  );
 
   React.useEffect(() => {
     getValue();
@@ -54,17 +57,29 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
       },
       { title: "Значение", dataIndex: "value", key: "value" },
       {
-        title: "Action",
+        title: <div style={{ textAlign: "center" }}>Action</div>,
         dataIndex: "action",
         key: "sub_action",
+        width: "15%",
         render: (_: any, record: any) => {
           if (record.type_preferense === "STRING") {
-            return undefined;
+            return (
+              <div style={{ textAlign: "center" }}>
+                <Button danger type="link" onClick={() => delBtn(record)}>
+                  Delete
+                </Button>
+              </div>
+            );
           } else {
             return (
-              <Button type="link" onClick={() => btnEdit(record)}>
-                Edit feature
-              </Button>
+              <Space>
+                <Button type="link" onClick={() => btnEdit(record)}>
+                  Edit
+                </Button>
+                <Button danger type="link" onClick={() => delBtn(record)}>
+                  Delete
+                </Button>
+              </Space>
             );
           }
         },
@@ -123,17 +138,13 @@ const TabValueTable: FC<ValueProps> = (props: ValueProps) => {
     },
   ];
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-
-  console.log("Current Page:", currentPage);
   const changePage = (page: number) => {
-    setCurrentPage(page);
+    setCurrentPageValue(page);
     getValue(page, pagination.pageSize);
   };
 
   let paginationOption = {
-    defaultCurrent: 1,
-    // current: currentPage,
+    current: currentPage,
     total: count,
     pageSize: pagination.pageSize,
     onChange: (page: number) => changePage(page),

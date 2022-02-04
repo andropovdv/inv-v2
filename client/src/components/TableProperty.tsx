@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { FC } from "react";
 import { useActions } from "../hooks/useActions";
@@ -9,10 +9,11 @@ import { pagination } from "../utils/consts";
 
 interface PropertyProps {
   editBtn: (v: any) => void;
+  delBtn: (d: any) => void;
 }
 
 const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
-  const { editBtn } = props;
+  const { editBtn, delBtn } = props;
   const { getProperty, setSelectedProperty, setCurrentPageProperty } =
     useActions();
   const { propertis, count, currentPage } = useTypedSelector(
@@ -66,13 +67,18 @@ const TableProperty: FC<PropertyProps> = (props: PropertyProps) => {
       dataIndex: "unit",
     },
     {
-      title: "Action",
+      title: <div style={{ textAlign: "center" }}>Action</div>,
       dataIndex: "action",
       width: "15%",
       render: (_: any, record: any) => (
-        <Button type="link" onClick={() => buttonEdit(record)}>
-          Edit property
-        </Button>
+        <Space>
+          <Button type="link" onClick={() => buttonEdit(record)}>
+            Edit
+          </Button>
+          <Button danger type="link" onClick={() => delBtn(record)}>
+            Delete
+          </Button>
+        </Space>
       ),
     },
   ];

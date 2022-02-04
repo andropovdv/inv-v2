@@ -15,8 +15,9 @@ interface DeviceProp {
 
 const TableDevices: FC<DeviceProp> = (props: DeviceProp) => {
   const { editBtn, delBtn } = props;
-  const { getDevice, getType, setSelectedDevice } = useActions();
-  const { devices, isLoading, count } = useTypedSelector(
+  const { getDevice, getType, setSelectedDevice, setCurrentPageDevice } =
+    useActions();
+  const { devices, isLoading, count, currentPage } = useTypedSelector(
     (state) => state.devices
   );
 
@@ -57,12 +58,13 @@ const TableDevices: FC<DeviceProp> = (props: DeviceProp) => {
     {
       title: "Action",
       dataIndex: "operation",
+      width: "15%",
       render: (_: any, record: any) => (
-        <Space size="middle">
+        <Space>
           <Button type="link" onClick={() => editTableBtn(record)}>
             Edit
           </Button>
-          <Button type="link" onClick={() => delBtn(record)}>
+          <Button danger type="link" onClick={() => delBtn(record)}>
             Delete
           </Button>
         </Space>
@@ -72,11 +74,13 @@ const TableDevices: FC<DeviceProp> = (props: DeviceProp) => {
   ];
 
   const changePage = (page: number) => {
+    setCurrentPageDevice(page);
     getDevice(page, pagination.pageSize);
   };
 
   let paginationOptions = {
     total: count,
+    current: currentPage,
     pageSize: pagination.pageSize,
     onChange: (page: number) => changePage(page),
     hideOnSinglePage: true,

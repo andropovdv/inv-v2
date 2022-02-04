@@ -67,6 +67,20 @@ const Properties: FC = () => {
     });
   };
 
+  const delFromTable = (rec: any) => {
+    confirm({
+      title: <Text type="secondary">Do you really want to delete</Text>,
+      icon: <ExclamationCircleOutlined />,
+      content: <b>{`${rec.preferense}`}</b>,
+      okText: "Yes",
+      okType: "danger",
+      onOk() {
+        setCurrentPageProperty(1);
+        deleteProperty([rec.id]);
+      },
+    });
+  };
+
   const createBtn = () => {
     setIsAdd(true);
     setVisibly(true);
@@ -74,7 +88,6 @@ const Properties: FC = () => {
 
   const updateBtn = (row: number) => {
     const elem: any = propertis.find((el: IProperty) => el.id === row);
-    console.log("elem:", elem);
     if (elem) {
       setRow(elem);
     }
@@ -109,7 +122,7 @@ const Properties: FC = () => {
           {hasSelected ? `Remove (${selected.length})` : "Remove"}
         </Button>
       </Space>
-      <TableProperty editBtn={updateBtn} />
+      <TableProperty editBtn={updateBtn} delBtn={delFromTable} />
       <PropertyModal
         title={
           isAdd ? (

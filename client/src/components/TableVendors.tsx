@@ -31,15 +31,6 @@ const TableVendors: FC<VendorProps> = (props: VendorProps) => {
     onChange: onSelectChange,
   };
 
-  // const buttonEdit = (name: string) => {
-  //   const item = vendors.filter((el) => el.name === name);
-  //   if (item[0].id) {
-  //     setSetSelectedRowKeys([item[0].id]);
-  //     setSelectedVendor([item[0].id]);
-  //     editBtn();
-  //   }
-  // };
-
   React.useEffect(() => {
     getVendor();
   }, []);
@@ -56,16 +47,16 @@ const TableVendors: FC<VendorProps> = (props: VendorProps) => {
       dataIndex: "name",
     },
     {
-      title: "Action",
+      title: <div style={{ textAlign: "center" }}>Action</div>,
       dataIndex: "action",
-      width: "25%",
+      width: "15%",
       render: (_: any, record: any) => (
         <Space>
           <Button type="link" onClick={() => updateBtn(record)}>
-            Edit vendor
+            Edit
           </Button>
           <Button danger type="link" onClick={() => delBtn(record)}>
-            Delete vendor
+            Delete
           </Button>
         </Space>
       ),

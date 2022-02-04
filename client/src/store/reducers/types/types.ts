@@ -7,6 +7,7 @@ export interface TypeState {
   error: string;
   selected: number[];
   count: number;
+  currentPage: number;
 }
 
 export enum TypeActionEnum {
@@ -17,6 +18,7 @@ export enum TypeActionEnum {
   SET_TYPES_COUNT = "SET_TYPES_COUNT",
   SET_TYPES_DROPDOWN = "SET_TYPES_DROPDOWN",
   REMOVE_TYPES_DROPDOWN = "TYPES_DROPDOWN",
+  SET_TYPES_CURRENT_PAGE = "SET_TYPES_CURRENT_PAGE",
 }
 
 export interface SetTypesAction {
@@ -54,6 +56,11 @@ export interface SetSelectedTypes {
   payload: number[];
 }
 
+export interface SetTypesCurrentPage {
+  type: TypeActionEnum.SET_TYPES_CURRENT_PAGE;
+  payload: number;
+}
+
 export type TypesAction =
   | SetTypesAction
   | SetCountAction
@@ -61,4 +68,5 @@ export type TypesAction =
   | SetIsLoadingAction
   | SetSelectedTypes
   | SetTypesDropDownAction
-  | RemoveTypesDropdown;
+  | RemoveTypesDropdown
+  | SetTypesCurrentPage;

@@ -4,6 +4,7 @@ import { AppDispatch } from "./../../index";
 import {
   DeviceActionEnum,
   SetCountAction,
+  SetDeviceCurrentPageAction,
   SetDevicesAction,
   SetErrorAction,
   SetIsLoadingAction,
@@ -29,6 +30,10 @@ export const DeviceActionCreator = {
   }),
   setSelectedDevice: (payload: number[]): SetSelectedAction => ({
     type: DeviceActionEnum.SET_DEVICES_SELECTED,
+    payload: payload,
+  }),
+  setCurrentPageDevice: (payload: number): SetDeviceCurrentPageAction => ({
+    type: DeviceActionEnum.SET_DEVICES_CURENNT_PAGE,
     payload: payload,
   }),
   getDevice:

@@ -6,6 +6,7 @@ export interface DeviceState {
   error: string;
   selected: number[];
   count: number;
+  currentPage: number;
 }
 
 export enum DeviceActionEnum {
@@ -14,6 +15,7 @@ export enum DeviceActionEnum {
   SET_DEVICES_ERROR = "SET_DEVICES_ERROR",
   SET_DEVICES_SELECTED = "SET_DEVICES_SELECTED",
   SET_DEVICES_COUNT = "SET_DEVICES_COUNT",
+  SET_DEVICES_CURENNT_PAGE = "SET_DEVICES_CURENNT_PAGE",
 }
 
 export interface SetDevicesAction {
@@ -41,9 +43,15 @@ export interface SetSelectedAction {
   payload: number[];
 }
 
+export interface SetDeviceCurrentPageAction {
+  type: DeviceActionEnum.SET_DEVICES_CURENNT_PAGE;
+  payload: number;
+}
+
 export type DeviceAction =
   | SetDevicesAction
   | SetCountAction
   | SetErrorAction
   | SetIsLoadingAction
-  | SetSelectedAction;
+  | SetSelectedAction
+  | SetDeviceCurrentPageAction;

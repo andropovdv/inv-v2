@@ -40,7 +40,11 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
     if (mode) {
       form.setFieldsValue(current);
     } else {
-      form.setFieldsValue({ name: current?.name, value: current?.name });
+      form.setFieldsValue({
+        name: current?.name,
+        value: current?.name,
+        id: current?.id,
+      });
       getValue(undefined, undefined, current?.typeId);
     }
     // form.setFieldsValue(current);
@@ -94,7 +98,9 @@ const DeviceModal: FC<DeviceProps> = (props: DeviceProps) => {
               />
             </>
           )}
-
+          <Item hidden name="id">
+            <Input type="hidden" />
+          </Item>
           <Item name="name" rules={[rules.required()]}>
             <Input placeholder="Модель" />
           </Item>

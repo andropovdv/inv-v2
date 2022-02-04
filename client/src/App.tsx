@@ -34,7 +34,21 @@ const App = () => {
     <div>
       <Layout>
         {isAuth ? (
-          <Layout.Sider collapsible collapsed={colapsed}>
+          // <Layout.Sider collapsible collapsed={colapsed}>
+          //   <div className="logo">Inventor</div>
+          //   <MenuSider />
+          // </Layout.Sider>
+          <Layout.Sider
+            style={{ height: "100vh" }}
+            breakpoint="lg"
+            collapsedWidth="0"
+            // onBreakpoint={(broken) => {
+            //   console.log(broken);
+            // }}
+            // onCollapse={(collapsed, type) => {
+            //   console.log(collapsed, type);
+            // }}
+          >
             <div className="logo">Inventor</div>
             <MenuSider />
           </Layout.Sider>

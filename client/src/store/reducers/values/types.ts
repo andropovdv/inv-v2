@@ -7,6 +7,7 @@ export interface ValueState {
   error: string;
   selected: number[];
   count: number;
+  currentPage: number;
 }
 
 export enum ValuesActionEnum {
@@ -16,6 +17,7 @@ export enum ValuesActionEnum {
   SET_VALUES_SELECTED = "SET_VALUES_SELECTED",
   SET_VALUES_COUNT = "SET_VALUES_COUNT",
   SET_VALUES_FIELDS = "SET_VALUES_FIELDS",
+  SET_VALUES_CURRENT_PAGE = "SET_VALUES_CURRENT_PAGE",
 }
 
 export interface SetValueAction {
@@ -48,10 +50,16 @@ export interface SetValueSelectedAction {
   payload: number[];
 }
 
+export interface SetValuesCurrentPageAction {
+  type: ValuesActionEnum.SET_VALUES_CURRENT_PAGE;
+  payload: number;
+}
+
 export type ValueAction =
   | SetValueAction
   | SetValueCountAction
   | SetValueErrorAction
   | SetValueIsLoading
   | SetValueSelectedAction
-  | SetValueFieldsAction;
+  | SetValueFieldsAction
+  | SetValuesCurrentPageAction;

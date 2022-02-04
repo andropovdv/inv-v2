@@ -1,6 +1,7 @@
 import createError from "http-errors";
 import { Type, TypeInfo } from "../model/models.js";
 import pk from "sequelize";
+import errorMessage from "../utils/errorMessage.js";
 const { Op } = pk;
 
 const typeController = {
@@ -57,7 +58,8 @@ const typeController = {
       const result = await Type.update({ name }, { where: { id } });
       return res.json(result);
     } catch (e) {
-      return next(new createError(500, `Что-то пошло не так ${e.message}`));
+      return next(new createError(500, errorMessage(e)));
+      // return next(new createError(500, `Что-то пошло не так ${e.message}`));
     }
   },
   async deleteTypes(req, res, next) {
@@ -66,9 +68,10 @@ const typeController = {
       const result = await Type.destroy({ where: { id: { [Op.in]: id } } });
       return res.json({ result });
     } catch (e) {
-      return next(
-        new createError(500, `DELETE: что-то пошло не так ${e.message}`)
-      );
+      return next(new createError(500, errorMessage(e)));
+      // return next(
+      //   new createError(500, `DELETE: что-то пошло не так ${e.name}`)
+      // );
     }
   },
 };

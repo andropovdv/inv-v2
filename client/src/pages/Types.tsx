@@ -22,8 +22,14 @@ const Types: FC = () => {
   const [row, setRow] = React.useState({} as CurrentRow);
 
   const { selected, types, error } = useTypedSelector((state) => state.types);
-  const { deleteType, addType, updateType, setSelectedTypes, setError } =
-    useActions();
+  const {
+    deleteType,
+    addType,
+    updateType,
+    setSelectedTypes,
+    setError,
+    setCurrentPageTyoe,
+  } = useActions();
 
   const hasSelected = selected.length > 0;
   const hasEditSelected = selected.length > 0 && selected.length <= 1;
@@ -65,11 +71,13 @@ const Types: FC = () => {
 
   const typeCreate = (value: IType) => {
     const pref = JSON.stringify(value.pref);
+    setCurrentPageTyoe(1);
     addType(value.name, pref);
     setVisibly(false);
   };
   const typeUpdate = (value: IType) => {
     const payload = { ...value, id: editRow.id };
+    setCurrentPageTyoe(1);
     updateType(payload);
     setSelectedTypes([]);
     setVisibly(false);
@@ -87,6 +95,7 @@ const Types: FC = () => {
       okText: "Yes",
       okType: "danger",
       onOk() {
+        setCurrentPageTyoe(1);
         deleteType(selected);
       },
       onCancel() {
@@ -95,7 +104,19 @@ const Types: FC = () => {
     });
   };
 
-  console.log("Types render");
+  const delFromTable = (rec: any) => {
+    confirm({
+      title: <Text type="secondary">Do you really want to delete</Text>,
+      icon: <ExclamationCircleOutlined />,
+      content: <b>{`${rec.name}`}</b>,
+      okText: "Yes",
+      okType: "danger",
+      onOk() {
+        setCurrentPageTyoe(1);
+        deleteType([rec.id]);
+      },
+    });
+  };
 
   return (
     <div>
@@ -110,7 +131,7 @@ const Types: FC = () => {
           {hasSelected ? `Delete (${selected.length})` : "Delete"}
         </Button>
       </div>
-      <TableTypes editBtn={updateBtn} />
+      <TableTypes editBtn={updateBtn} delBtn={delFromTable} />
       <TypeModal
         title={
           isAdd ? (

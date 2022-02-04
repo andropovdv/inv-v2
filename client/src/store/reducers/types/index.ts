@@ -8,6 +8,7 @@ const initialState: TypeState = {
   error: "",
   selected: [],
   count: 0,
+  currentPage: 1,
 };
 
 const typeReduser = (state = initialState, action: TypesAction): TypeState => {
@@ -35,6 +36,9 @@ const typeReduser = (state = initialState, action: TypesAction): TypeState => {
     }
     case TypeActionEnum.SET_TYPES_COUNT: {
       return { ...state, count: action.payload };
+    }
+    case TypeActionEnum.SET_TYPES_CURRENT_PAGE: {
+      return { ...state, currentPage: action.payload };
     }
     default:
       return state;

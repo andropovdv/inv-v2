@@ -1,22 +1,11 @@
 import createError from "http-errors";
 import { Device, Type, Vendor, DeviceInfo, TypeInfo } from "../model/models.js";
+import errorMessage from "../utils/errorMessage.js";
 import colors from "colors";
 import pk from "sequelize";
 const { Op } = pk;
 
 const deviceController = {
-  // async getDevices(req, res, next) {
-  //   try {
-  //     let { limit, page } = req.query;
-  //     page = page || 1;
-  //     limit = +limit || 5;
-  //     let offset = page * limit - limit;
-  //     const devices = await Device.findAndCountAll({ limit, offset });
-  //     return res.json(devices);
-  //   } catch (e) {
-  //     return next(new createError(500, "Что-то пошло не так"));
-  //   }
-  // },
   async getDevices(req, res, next) {
     try {
       let { limit, page } = req.query;
@@ -76,9 +65,10 @@ const deviceController = {
   async updateDevices(req, res, next) {
     try {
       const { id, name, info } = req.body;
+      const update = await Device.update({ name }, { where: { id: id } });
       if (info) {
         let infoApi = JSON.parse(info);
-        console.log(infoApi);
+        console.log(colors.bgMagenta.black(infoApi));
         infoApi.forEach(async (el) => {
           await DeviceInfo.update(
             { description: el.desc },
@@ -88,6 +78,7 @@ const deviceController = {
           );
         });
       }
+      return res.json(update);
     } catch (e) {
       console.log(e);
       return next(new createError(500, `Что-то пошло не так ${e.message}`));
@@ -96,10 +87,11 @@ const deviceController = {
   async deleteDevices(req, res, next) {
     const { id } = req.body;
     try {
+      await DeviceInfo.destroy({ where: { deviceId: { [Op.in]: id } } });
       const result = await Device.destroy({ where: { id: { [Op.in]: id } } });
       return res.json(result);
     } catch (e) {
-      return next(new createError(500, `Что-то пошло не так ${e.message}`));
+      return next(new createError(500, errorMessage(e)));
     }
   },
 };

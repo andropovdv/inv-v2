@@ -33,6 +33,7 @@ const ValueTable: FC = () => {
     updateValue,
     setSelectedValue,
     removeTypeDropDown,
+    setCurrentPageValue,
   } = useActions();
 
   const [visibly, setVisibly] = React.useState(false);
@@ -115,6 +116,7 @@ const ValueTable: FC = () => {
 
   const createVal = (value: IValue) => {
     addValue(value);
+    setCurrentPageValue(1);
     setIsAddFeature(false);
     setRowEdit({} as any);
     setVisibly(false);
@@ -126,6 +128,7 @@ const ValueTable: FC = () => {
     } else {
       payload = { ...value };
     }
+    setCurrentPageValue(1);
     updateValue(payload);
     setSelectedValue([]);
     setVisibly(false);
@@ -143,7 +146,23 @@ const ValueTable: FC = () => {
       okText: "Yes",
       okType: "danger",
       onOk() {
+        setCurrentPageValue(1);
         deleteValue(selected);
+      },
+    });
+  };
+
+  const delFromTable = (rec: any) => {
+    console.log("Rec: ", rec);
+    confirm({
+      title: <Text type="secondary">Do you really want to delete</Text>,
+      icon: <ExclamationCircleOutlined />,
+      content: <b>{`${rec.preferense}`}</b>,
+      okText: "Yes",
+      okType: "danger",
+      onOk() {
+        setCurrentPageValue(1);
+        deleteValue([rec.key]);
       },
     });
   };
@@ -161,7 +180,11 @@ const ValueTable: FC = () => {
           {hasSelected ? `Remove (${selected.length})` : "Remove"}
         </Button>
       </Space>
-      <TabValueTable editBtn={updateBtnRow} createBtn={createBtnFeature} />
+      <TabValueTable
+        editBtn={updateBtnRow}
+        createBtn={createBtnFeature}
+        delBtn={delFromTable}
+      />
       <ValueModal
         title={
           isAdd ? (

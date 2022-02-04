@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { FC } from "react";
 import { useActions } from "../hooks/useActions";
@@ -9,12 +9,15 @@ import { pagination } from "../utils/consts";
 
 interface TypeProps {
   editBtn: (val: IType) => void;
+  delBtn: (d: any) => void;
 }
 
 const TableTypes: FC<TypeProps> = (props: TypeProps) => {
-  const { editBtn } = props;
-  const { getType, setSelectedTypes } = useActions();
-  const { types, isLoading, count } = useTypedSelector((state) => state.types);
+  const { editBtn, delBtn } = props;
+  const { getType, setSelectedTypes, setCurrentPageTyoe } = useActions();
+  const { types, isLoading, count, currentPage } = useTypedSelector(
+    (state) => state.types
+  );
 
   React.useEffect(() => {
     getType();
@@ -42,15 +45,20 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "20%",
     },
     {
-      title: "Action",
+      title: <div style={{ textAlign: "center" }}>Action</div>,
       dataIndex: "action",
+      width: "15%",
       render: (_, record: any) => (
-        <Button type="link" onClick={() => buttonEdit(record)}>
-          Edit type
-        </Button>
+        <Space>
+          <Button type="link" onClick={() => buttonEdit(record)}>
+            Edit
+          </Button>
+          <Button danger type="link" onClick={() => delBtn(record)}>
+            Delete
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -58,11 +66,13 @@ const TableTypes: FC<TypeProps> = (props: TypeProps) => {
   const tableDate: IType[] = types.map((el) => ({ ...el, key: el.id }));
 
   const changePage = (page: number) => {
+    setCurrentPageTyoe(page);
     getType(page, pagination.pageSize);
   };
 
   let paginationOptions = {
     total: count,
+    current: currentPage,
     pageSize: pagination.pageSize,
     onChange: (page: number) => changePage(page),
     hideOnSinglePage: true,

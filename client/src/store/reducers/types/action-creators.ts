@@ -8,6 +8,7 @@ import {
   SetIsLoadingAction,
   SetSelectedTypes,
   SetTypesAction,
+  SetTypesCurrentPage,
   SetTypesDropDownAction,
   TypeActionEnum,
 } from "./types";
@@ -39,6 +40,10 @@ export const TypeActionCreator = {
   }),
   setSelectedTypes: (payload: number[]): SetSelectedTypes => ({
     type: TypeActionEnum.SET_TYPES_SELECTED,
+    payload: payload,
+  }),
+  setCurrentPageTyoe: (payload: number): SetTypesCurrentPage => ({
+    type: TypeActionEnum.SET_TYPES_CURRENT_PAGE,
     payload: payload,
   }),
   getType: (page?: number, limit?: number) => async (dispatch: AppDispatch) => {

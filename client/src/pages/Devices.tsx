@@ -16,8 +16,13 @@ const Devices: FC = () => {
   const { error, selected, devices, count } = useTypedSelector(
     (state) => state.devices
   );
-  const { setErrorDevice, addDevice, deleteDevice, updateDevice } =
-    useActions();
+  const {
+    setErrorDevice,
+    addDevice,
+    deleteDevice,
+    updateDevice,
+    setCurrentPageDevice,
+  } = useActions();
   const [isAdd, setIsAdd] = React.useState(true);
   const [visibily, setVisibly] = React.useState(false);
   const [row, setRow] = React.useState({} as CurrentDevice);
@@ -56,6 +61,7 @@ const Devices: FC = () => {
 
   const updateBtn = (row: any) => {
     setRow({
+      id: row.id,
       typeId: row.typeId,
       vendorId: row.vendorId,
       name: row.name,
@@ -68,6 +74,7 @@ const Devices: FC = () => {
   };
 
   const createDev = (value: any) => {
+    setCurrentPageDevice(1);
     const info = JSON.stringify(value.info);
     addDevice(value.name, value.typeId, value.vendorId, info);
 
@@ -76,10 +83,11 @@ const Devices: FC = () => {
 
   const updateDev = (value: any) => {
     const elem: any = devices.find((el) => el.name === value.name);
-    console.log(value);
-    console.log(elem);
     const info = JSON.stringify(value.info);
-    updateDevice(elem.id, elem.name, info);
+    setCurrentPageDevice(1);
+    updateDevice(value.id, value.name, info);
+    // updateDevice(elem.id, elem.name, info);
+    setVisibly(false);
   };
 
   const delFromTable = (rec: any) => {
@@ -96,6 +104,7 @@ const Devices: FC = () => {
       okType: "danger",
       onOk() {
         deleteDevice([rec.id]);
+        setCurrentPageDevice(1);
       },
     });
   };
@@ -112,6 +121,7 @@ const Devices: FC = () => {
       okText: "Yes",
       okType: "danger",
       onOk() {
+        setCurrentPageDevice(1);
         deleteDevice(selected);
       },
     });

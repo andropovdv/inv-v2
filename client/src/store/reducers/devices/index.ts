@@ -7,6 +7,7 @@ const initialState: DeviceState = {
   error: "",
   selected: [],
   count: 0,
+  currentPage: 1,
 };
 
 const deviceReducer = (
@@ -28,6 +29,9 @@ const deviceReducer = (
     }
     case DeviceActionEnum.SET_DEVICES_COUNT: {
       return { ...state, count: action.payload };
+    }
+    case DeviceActionEnum.SET_DEVICES_CURENNT_PAGE: {
+      return { ...state, currentPage: action.payload };
     }
     default:
       return state;

@@ -8,6 +8,7 @@ const initialState: ValueState = {
   error: "",
   selected: [],
   count: 0,
+  currentPage: 1,
 };
 
 const valueReducer = (
@@ -32,6 +33,9 @@ const valueReducer = (
     }
     case ValuesActionEnum.SET_VALUES_COUNT: {
       return { ...state, count: action.payload };
+    }
+    case ValuesActionEnum.SET_VALUES_CURRENT_PAGE: {
+      return { ...state, currentPage: action.payload };
     }
     default:
       return state;

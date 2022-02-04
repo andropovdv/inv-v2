@@ -7,6 +7,7 @@ import {
   SetValueIsLoading,
   SetValueErrorAction,
   SetValueSelectedAction,
+  SetValuesCurrentPageAction,
 } from "./types";
 import { IValue, IOValue } from "../../../models/IValue";
 
@@ -33,6 +34,10 @@ export const ValueActionCreator = {
   }),
   setSelectedValue: (payload: number[]): SetValueSelectedAction => ({
     type: ValuesActionEnum.SET_VALUES_SELECTED,
+    payload: payload,
+  }),
+  setCurrentPageValue: (payload: number): SetValuesCurrentPageAction => ({
+    type: ValuesActionEnum.SET_VALUES_CURRENT_PAGE,
     payload: payload,
   }),
   getValue:

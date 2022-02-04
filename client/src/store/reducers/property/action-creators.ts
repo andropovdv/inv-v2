@@ -12,7 +12,6 @@ import {
   RemovePropertyDropDown,
   SetPropertyCurrentPageAction,
 } from "./types";
-import { pagination } from "../../../utils/consts";
 
 export const PropertyActionCreator = {
   setProperty: (propertis: IOProperty): SetPropertyAction => ({

@@ -17,6 +17,7 @@ export interface IODevice {
 }
 
 export interface CurrentDevice {
+  id?: number;
   typeId: number;
   vendorId: number;
   name: string;
